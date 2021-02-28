@@ -1,0 +1,5 @@
+name: baseline
+title: Dotkom baseline
+summary: Verify that SSH Server and SSH Client are configured securely
+supports:
+  - platform-family: linux

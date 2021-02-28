@@ -1,0 +1,58 @@
+---
+  - name: Download Consul Template
+    get_url:
+      url: https://releases.hashicorp.com/consul-template/0.25.2/consul-template_0.25.2_linux_amd64.zip
+      dest: /tmp/consul-template.zip
+  
+  - name: unzip Consul Template
+    unarchive:
+      remote_src: true
+      src: /tmp/consul-template.zip
+      dest: /usr/bin/
+
+  - name: Create a service unit
+    copy:
+      src: ./files/consul_template/consul-template.service
+      dest: /usr/lib/systemd/system/consul-template.service
+      owner: consul
+      group: consul
+      mode: 0644
+
+  - name: Create Consul template config dir
+    file: 
+      path: /etc/consul_template.d/
+      state: directory
+      recurse: true
+      group: consul
+      owner: consul
+      mode: 0640
+
+  - name: Add Consul Template config
+    copy: 
+      src: ./files/consul_template/consul_template.hcl
+      dest: /etc/consul_template.d/consul_template.hcl
+      mode: 0640
+      group: consul
+      owner: consul
+
+  - name: Add Consul Template scripts
+    copy: 
+      src: ./files/consul_template/scripts
+      dest: /etc/consul_template.d/scripts
+      mode: 0640
+      group: consul
+      owner: consul
+
+  - name: Add Consul Template templates
+    copy: 
+      src: ./files/consul_template/templates
+      dest: /etc/consul_template.d/templates
+      mode: 0640
+      group: consul
+      owner: consul
+
+  - name: Enable Consul template
+    systemd:
+      daemon_reload: yes
+      name: consul-template
+      enabled: yes

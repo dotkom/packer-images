@@ -1,0 +1,29 @@
+---
+  - name: Remove default vault config
+    file: 
+      path: /etc/vault.d/vault.hcl
+      state: absent
+
+  - name: Install vault autocompletion
+    shell: vault -autocomplete-install && complete -C /usr/bin/vault vault
+    ignore_errors: yes
+    args:
+      executable: /bin/bash
+
+  - name: Create Vault data dir
+    file: 
+      path: /opt/vault
+      recurse: true
+      state: directory
+      group: vault
+      owner: vault
+      mode: 0640
+
+  - name: Create Vault config dir
+    file: 
+      path: /etc/vault.d
+      recurse: true
+      state: directory
+      group: vault
+      owner: vault
+      mode: 0640

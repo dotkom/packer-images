@@ -1,0 +1,63 @@
+---
+  - name: Ensure group consul exists
+    group:
+      name: consul
+      state: present
+
+  - name: Add Consul user
+    user:
+      name: consul
+      group: consul
+      comment: User for running Consul
+      home: /etc/consul.d
+
+  - name: Install consul autocompletion
+    shell: consul -autocomplete-install && complete -C /usr/bin/consul consul
+    ignore_errors: yes
+    args:
+      executable: /bin/bash
+
+  - name: Create a service unit
+    copy:
+      src: ./files/consul/consul.service
+      dest: /usr/lib/systemd/system/consul.service
+      owner: consul
+      group: consul
+      mode: 0644
+
+  - name: Remove default consul config
+    file: 
+      path: /etc/consul.d/consul.hcl
+      state: absent
+
+  - name: Create Consul config dir
+    file: 
+      path: /etc/consul.d/
+      state: directory
+      recurse: true
+      group: consul
+      owner: consul
+      mode: 0640
+
+  - name: Create Consul data dir
+    file: 
+      path: /opt/consul
+      state: directory
+      recurse: true
+      group: consul
+      owner: consul
+      mode: 0640
+
+  - name: Add consul config
+    copy: 
+      src: ./files/consul/consul_{{cloud_provider}}.json
+      dest: /etc/consul.d/consul.json
+      mode: 0640
+      group: consul
+      owner: consul
+
+  - name: Enable consul
+    systemd:
+      daemon_reload: yes
+      name: consul
+      enabled: yes

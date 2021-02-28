@@ -1,0 +1,22 @@
+
+[Unit]
+Description="HashiCorp Consul Template"
+Documentation=https://github.com/hashicorp/consul-template
+Requires=network-online.target
+After=network-online.target consul.service vault.service
+
+[Service]
+Environment="VAULT_ADDR=https://vault.online.ntnu.no"
+Restart=on-failure
+KillSignal=SIGINT
+ExecStartPre=/usr/bin/vault agent -config /etc/vault-agent.d/vault-agent.hcl
+ExecStart=exec env VAULT_TOKEN=$(vault unwrap -field=token $(jq -r '.token' /tmp/vault/agent/token)) \
+            /usr/bin/consul-template -config=/etc/consul_template.d
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

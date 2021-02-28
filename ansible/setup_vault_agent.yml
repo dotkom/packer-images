@@ -1,0 +1,17 @@
+---
+  - name: Create Vault agent config dir
+    file: 
+      path: /etc/vault_agent.d
+      recurse: true
+      state: directory
+      group: vault
+      owner: vault
+      mode: 0640
+
+  - name: Add vault_agent config
+    copy: 
+      src: ./files/vault_agent/vault_agent_{{cloud_provider}}.hcl
+      dest: /etc/vault_agent.d/vault_agent.hcl
+      mode: 0640
+      group: vault
+      owner: vault

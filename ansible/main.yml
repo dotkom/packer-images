@@ -1,0 +1,13 @@
+---
+  - name: Setup image
+    hosts: default
+    become: yes
+    tasks:
+    - import_tasks: install_base.yml
+    - import_tasks: setup_ssh_config.yml
+    - import_tasks: setup_consul.yml
+    - import_tasks: setup_consul_template.yml
+    - import_tasks: setup_vault.yml
+    - import_tasks: setup_vault_agent.yml
+    - import_tasks: setup_users.yml
+    - import_tasks: configure_dnsmasq.yml

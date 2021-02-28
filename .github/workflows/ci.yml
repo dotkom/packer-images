@@ -1,0 +1,76 @@
+name: "CI/CD"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: "Check"
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Validate Template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: packer.pkr.hcl
+
+      - name: Build Dockeratifcat for testing
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-only '*.testing' -color=false -on-error=abort"
+          target: packer.pkr.hcl
+        env:
+          PACKER_LOG: 1
+
+      - name: Build AWS AMI
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort"
+          target: packer.pkr.hcl
+        env:
+          PACKER_LOG: 1
+
+  publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build AWS AMI
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort"
+          target: packer.pkr.hcl
+        env:
+          PACKER_LOG: 1
+
+      
