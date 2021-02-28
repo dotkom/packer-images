@@ -17,12 +17,11 @@ jobs:
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.1.2
         with:
-          url: https://vault.online.ntnu.no.com:8200
-          method: github
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          url: https://vault.online.ntnu.no:8200
+          token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-action-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-action-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+              aws/creds/vault-gh-actions-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
+              aws/creds/vault-gh-actions-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
               
       - name: Checkout
         uses: actions/checkout@v2
@@ -60,16 +59,16 @@ jobs:
   publish:
     name: "Publish"
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.1.2
         with:
-          url: https://vault.online.ntnu.no.com:8200
-          method: github
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          url: https://vault.online.ntnu.no:8200
+          token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-action-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-action-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+              aws/creds/vault-gh-actions-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
+              aws/creds/vault-gh-actions-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
 
       - name: Checkout
         uses: actions/checkout@v2
