@@ -38,6 +38,9 @@ source "amazon-ebs" "default" {
     region        = "eu-west-1"
     source_ami    = "ami-08bac620dc84221eb"
     ssh_username  = "dotkom"
+    tags = {
+      environment = var.environment
+    }
     user_data = <<EOF
 #cloud-config
 system_info:
@@ -72,6 +75,7 @@ build {
 
     provisioner "inspec" {
       profile = "./inspec"
+      inspec_env_vars = [ "CHEF_LICENSE=accept"]
     }
 }
 
@@ -96,5 +100,8 @@ build {
 
     provisioner "inspec" {
       profile = "./inspec"
+      user = "dotkom"
+      inspec_env_vars = [ "CHEF_LICENSE=accept"]
+      extra_arguments = [ "--sudo" ]
     }
 }

@@ -27,6 +27,12 @@
       owner: consul
       mode: 0640
 
+  - name: Place runscript
+    copy:
+      src: ./files/consul_template/consul-template.sh
+      dest: /etc/consul_template.d/consul-template.sh
+      mode: a+x
+
   - name: Add Consul Template config
     copy: 
       src: ./files/consul_template/consul_template.hcl
@@ -38,16 +44,18 @@
   - name: Add Consul Template scripts
     copy: 
       src: ./files/consul_template/scripts
-      dest: /etc/consul_template.d/scripts
+      dest: /etc/consul_template.d
       mode: 0640
+      directory_mode: 0640
       group: consul
       owner: consul
 
   - name: Add Consul Template templates
     copy: 
       src: ./files/consul_template/templates
-      dest: /etc/consul_template.d/templates
+      dest: /etc/consul_template.d
       mode: 0640
+      directory_mode: 0640
       group: consul
       owner: consul
 
