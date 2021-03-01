@@ -37,7 +37,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.testing' -on-error=abort"
+          arguments: "-only=vagrant.testing -on-error=abort"
         env:
           PACKER_LOG: 1
 
@@ -45,7 +45,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.amazon-ebs.default' -on-error=abort"
+          arguments: "-except=vagrant.testing -on-error=abort"
         env:
           PACKER_LOG: 1
 
@@ -75,7 +75,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.amazon-ebs.default' -on-error=abort -var environement=prod"
+          arguments: "-only=vagrant.testing -on-error=abort -var environement=prod"
         env:
           PACKER_LOG: 1
 
