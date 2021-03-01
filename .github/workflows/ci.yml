@@ -21,8 +21,8 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-actions-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-actions-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+              aws/creds/vault-gh-actions-packer-baseline access_key;
+              aws/creds/vault-gh-actions-packer-baseline secret_key;
               
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,6 +35,9 @@ jobs:
           target: packer.pkr.hcl
       - name: test
         run: aws sts get-caller-identity
+        env:
+          AWS_ACCESS_KEY_ID: ${{ steps.secrets.outputs.access_key }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.secrets.outputs.secret_key }}
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
