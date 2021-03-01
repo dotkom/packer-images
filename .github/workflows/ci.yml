@@ -11,7 +11,7 @@ on:
 jobs:
   check:
     name: "Check"
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Import Secrets
@@ -25,7 +25,13 @@ jobs:
               
       - name: Checkout
         uses: actions/checkout@v2
-
+      - name: Cache Vagrant boxes
+        uses: actions/cache@v2
+        with:
+          path: ~/.vagrant.d/boxes
+          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
+          restore-keys: |
+            ${{ runner.os }}-vagrant-
       - name: Validate Template
         uses: hashicorp/packer-github-actions@master
         with:
