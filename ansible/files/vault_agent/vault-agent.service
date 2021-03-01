@@ -1,6 +1,6 @@
 [Unit]
-Description="HashiCorp Consul Template"
-Documentation=https://github.com/hashicorp/consul-template
+Description="HashiCorp Vault Agent"
+Documentation=https://www.vaultproject.io/docs/agent
 Requires=network-online.target
 After=network-online.target
 
@@ -8,7 +8,7 @@ After=network-online.target
 Environment="VAULT_ADDR=https://vault.online.ntnu.no:8200"
 Restart=on-failure
 KillSignal=SIGINT
-ExecStart=/usr/bin/consul-template -config=/etc/consul_template.d/consul_template.hcl
+ExecStart=/usr/bin/vault agent -config /etc/vault_agent.d/vault_agent.hcl
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGTERM

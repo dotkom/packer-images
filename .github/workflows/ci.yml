@@ -37,7 +37,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only=vagrant.testing -on-error=abort"
+          arguments: "-only=vagrant.testing"
         env:
           PACKER_LOG: 1
 
@@ -45,14 +45,14 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-except=vagrant.testing -on-error=abort"
+          arguments: "-except=vagrant.testing"
         env:
           PACKER_LOG: 1
 
       - name: Remove test ami
         run: |
           aws ec2 deregister-image --image-id \
-          $(aws ec2 describe-images --filter "Name=tag:environment,Values=testing" --query 'Images[0].[ImageId]')
+          $(aws ec2 describe-images --filter "Name=tag:environment,Values=testing" --query 'Images[0].[ImageId]' --output text)
 
   publish:
     name: "Publish"
@@ -75,7 +75,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only=vagrant.testing -on-error=abort -var environement=prod"
+          arguments: "-only=vagrant.testing -var environement=prod"
         env:
           PACKER_LOG: 1
 

@@ -30,6 +30,18 @@ variable "vault_ssh_host_signer_path" {
   default = "ssh-host-signer"
 }
 
+locals {
+  cloud_provider_map = {
+    amazon-ebs = "aws"
+    vagrant = "aws"
+  }
+
+  user_map = {
+    amazon-ebs = "dotkom"
+    vagrant = "ubntu"
+  }
+}
+
 
 
 source "amazon-ebs" "default" {
@@ -41,6 +53,16 @@ source "amazon-ebs" "default" {
     tags = {
       environment = var.environment
     }
+
+  temporary_iam_instance_profile_policy_document {
+      Statement {
+          Action   = ["ec2:*"]
+          Effect   = "Allow"
+          Resource = ["*"]
+      }
+      Version = "2012-10-17"
+  }
+
     user_data = <<EOF
 #cloud-config
 system_info:
@@ -54,47 +76,31 @@ source "vagrant" "testing" {
   source_path = "ubuntu/focal64"
   provider = "virtualbox"
 }
-build {
-    sources = ["source.amazon-ebs.default"]
 
-    provisioner "ansible" {
-      playbook_file = "./ansible/main.yml"
-      extra_arguments = [
-      "-e consul_version=${var.consul_version}",
-      "-e vault_version=${var.vault_version}",
-      "-e vault_url=${var.vault_url}",
-      "-e vault_ssh_client_signer_path=${var.vault_ssh_client_signer_path}",
-      "-e vault_ssh_host_signer_path=${var.vault_ssh_host_signer_path}",
-      "-e vault_login_method=aws",
-      "-e sign_host_key=true",
-      "-e cloud_provider=aws",
-      "-e", "ansible_python_interpreter=/usr/bin/python3", 
-      "-u", "dotkom"
+build {
+    sources = ["source.amazon-ebs.default", "vagrant.testing"]
+
+    provisioner "shell" {
+      inline = [
+        "sudo apt-get update",
+        "sudo apt-get install software-properties-common",
+        "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+        "sudo apt-get install ansible -y"
       ]
     }
 
-    provisioner "inspec" {
-      profile = "./inspec"
-      inspec_env_vars = [ "CHEF_LICENSE=accept"]
-    }
-}
-
-
-
-build {
-    sources = ["source.vagrant.testing"]
-    provisioner "ansible" {
+    provisioner "ansible-local" {
       playbook_file = "./ansible/main.yml"
+      playbook_dir = "./ansible"
       extra_arguments = [
       "-e consul_version=${var.consul_version}",
       "-e vault_version=${var.vault_version}",
       "-e vault_url=${var.vault_url}",
       "-e vault_ssh_client_signer_path=${var.vault_ssh_client_signer_path}",
       "-e vault_ssh_host_signer_path=${var.vault_ssh_host_signer_path}",
-      "-e vault_login_method=aws",
-      "-e cloud_provider=aws",
-      "-e sign_host_key=false",
-      "--user", "ubuntu",
+      "-e cloud_provider=${local.cloud_provider_map[source.type]}",
+      "-e ansible_python_interpreter=/usr/bin/python3", 
+      "-u ${local.user_map[source.type]}"
       ]
     }
 
