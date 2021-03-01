@@ -37,8 +37,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.testing' -color=false -on-error=abort"
-          target: packer.pkr.hcl
+          arguments: "-only '*.testing' -on-error=abort"
         env:
           PACKER_LOG: 1
 
@@ -46,8 +45,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort"
-          target: packer.pkr.hcl
+          arguments: "-only '*.amazon-ebs.default' -on-error=abort"
         env:
           PACKER_LOG: 1
 
@@ -77,8 +75,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort -var environement=prod"
-          target: packer.pkr.hcl
+          arguments: "-only '*.amazon-ebs.default' -on-error=abort -var environement=prod"
         env:
           PACKER_LOG: 1
 
