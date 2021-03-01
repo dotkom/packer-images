@@ -11,8 +11,9 @@ on:
 jobs:
   check:
     name: "Check"
-    runs-on: macos-latest
-
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-west-1
     steps:
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.1.2
@@ -25,13 +26,7 @@ jobs:
               
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache Vagrant boxes
-        uses: actions/cache@v2
-        with:
-          path: ~/.vagrant.d/boxes
-          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
-          restore-keys: |
-            ${{ runner.os }}-vagrant-
+
       - name: Validate Template
         uses: hashicorp/packer-github-actions@master
         with:
@@ -39,19 +34,11 @@ jobs:
           arguments: -syntax-only
           target: packer.pkr.hcl
 
-      - name: Build Vagrant artifact for testing
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          arguments: "-only=vagrant.testing"
-        env:
-          PACKER_LOG: 1
-
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-except=vagrant.testing"
+          arguments: -except=vagrant.testing
         env:
           PACKER_LOG: 1
 
@@ -81,7 +68,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only=vagrant.testing -var environement=prod"
+          arguments: -except=vagrant.testing -var environement=prod
         env:
           PACKER_LOG: 1
 
