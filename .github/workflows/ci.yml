@@ -33,7 +33,8 @@ jobs:
           command: validate
           arguments: -syntax-only
           target: packer.pkr.hcl
-
+      - name: test
+        run: aws sts get-caller-identity
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
