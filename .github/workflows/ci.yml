@@ -23,7 +23,7 @@ jobs:
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
               aws/creds/vault-gh-actions-packer-baseline access_key;
-              aws/creds/vault-gh-actions-packer-baselines secret_key
+              aws/creds/vault-gh-actions-packer-baseline secret_key
               
       - name: Checkout
         uses: actions/checkout@v2
