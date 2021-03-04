@@ -1,8 +1,4 @@
 ---
-  - name: Upgrade the OS
-    apt:
-      upgrade: dist
-      update-cache: true
 
   - name: Add HashiCorp apt signing key
     apt_key:
@@ -13,6 +9,11 @@
     apt_repository:
       repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
       state: present
+
+  - name: Upgrade the OS
+    apt:
+      upgrade: dist
+      update-cache: true
 
   - name: Install base packages
     apt:
@@ -27,4 +28,3 @@
       - consul={{consul_version}}
       - vault={{vault_version}}
       state: present
-      update-cache: true

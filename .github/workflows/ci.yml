@@ -12,6 +12,8 @@ jobs:
   check:
     name: "Check"
     runs-on: ubuntu-latest
+    env:
+      DEFAULT_AWS_REGION: eu-west-1
     steps:
       - name: Import Secrets
         id: secrets
@@ -20,16 +22,15 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              /aws/creds/vault-gh-actions-packer-baseline access_key;
-              /aws/creds/vault-gh-actions-packer-baseline secret_key
-              
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ steps.secrets.outputs.access_key }}
-          aws-secret-access-key: ${{ steps.secrets.outputs.secret_key }}
-          aws-region: eu-west-1
-        
+              /aws/creds/gh-workflow-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/gh-workflow-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+
+      - name: Wait for IAM eventual consistency
+        run: sleep 10
+
+      - name: Install inspec
+        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -40,9 +41,6 @@ jobs:
           arguments: -syntax-only
           target: packer.pkr.hcl
           
-      - name: test
-        run: aws sts get-caller-identity
-
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
@@ -67,8 +65,14 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-actions-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-actions-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+              /aws/creds/gh-workflow-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/gh-workflow-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+        
+      - name: Wait for IAM eventual consistency
+        run: sleep 10
+        
+      - name: Install inspec
+        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
       - name: Checkout
         uses: actions/checkout@v2

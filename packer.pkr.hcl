@@ -42,8 +42,6 @@ locals {
   }
 }
 
-
-
 source "amazon-ebs" "default" {
     ami_name      = "dotkom/images/${var.environment}/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
     instance_type = "t3a.nano"
@@ -53,15 +51,6 @@ source "amazon-ebs" "default" {
     tags = {
       environment = var.environment
     }
-
-  temporary_iam_instance_profile_policy_document {
-      Statement {
-          Action   = ["ec2:*"]
-          Effect   = "Allow"
-          Resource = ["*"]
-      }
-      Version = "2012-10-17"
-  }
 
     user_data = <<EOF
 #cloud-config
@@ -104,10 +93,17 @@ build {
       ]
     }
 
-    provisioner "inspec" {
-      profile = "./inspec"
-      user = "dotkom"
-      inspec_env_vars = [ "CHEF_LICENSE=accept"]
-      extra_arguments = [ "--sudo" ]
+    provisioner "file"{
+      source = "./inspec"
+      destination = "/tmp/inspec"
     }
+
+    provisioner "shell" {
+      inline = [
+        "curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec",
+        "sudo inspec exec --chef-license=accept /tmp/inspec",
+        "sudo apt-get remove inspec -y"
+      ]
+    }
+
 }
