@@ -12,8 +12,6 @@ jobs:
   check:
     name: "Check"
     runs-on: ubuntu-latest
-    env:
-      DEFAULT_AWS_REGION: eu-west-1
     steps:
       - name: Import Secrets
         id: secrets
@@ -22,8 +20,8 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-actions-packer-baseline access_key;
-              aws/creds/vault-gh-actions-packer-baseline secret_key
+              /aws/creds/vault-gh-actions-packer-baseline access_key;
+              /aws/creds/vault-gh-actions-packer-baseline secret_key
               
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
