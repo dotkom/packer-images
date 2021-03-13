@@ -1,10 +1,5 @@
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 
-variable "environment" {
-  type    = string
-  default = "testing"
-}
-
 variable "consul_version" {
   type    = string
   default = "1.9.3"
@@ -43,12 +38,12 @@ locals {
 
   user_map = {
     amazon-ebs = "dotkom"
-    vagrant    = "ubntu"
+    vagrant    = "ubuntu"
   }
 }
 
 source "amazon-ebs" "default" {
-  ami_name      = "dotkom/images/${var.environment}/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
+  ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
   instance_type = "t3a.nano"
   region        = "eu-west-1"
   source_ami    = "ami-08bac620dc84221eb"
@@ -56,7 +51,6 @@ source "amazon-ebs" "default" {
 
   tags = merge({
     packer      = true
-    environment = var.environment
   }, var.ami_tags)
 
   user_data = <<EOF

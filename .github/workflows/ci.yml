@@ -9,11 +9,12 @@ on:
       - main
 
 jobs:
-  check:
-    name: "Check"
+  ci:
+    name: "Packer CI"
     runs-on: ubuntu-latest
     env:
-      DEFAULT_AWS_REGION: eu-west-1
+      AWS_DEFAULT_REGION: eu-west-1
+
     steps:
       - name: Import Secrets
         id: secrets
@@ -28,9 +29,13 @@ jobs:
       - name: Wait for IAM eventual consistency
         run: sleep 10
 
-      - name: Install inspec
-        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
-
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION}}
+          
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -45,49 +50,25 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -except=vagrant.testing -var='ami_tags={"ci":"true","git-ref":"${{ github.sha }}"}'
-        env:
-          PACKER_LOG: 1
+          arguments: > 
+            -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+            -except=vagrant.testing
+          target: packer.pkr.hcl
 
-      - name: Remove test ami
-        run: |
-          aws ec2 deregister-image --image-id \
-          $(aws ec2 describe-images --filter \
-          "Name=name,Values=dotkom/images/testing/hvm-ssd/ubuntu-focal-20.04-baseline-*" \
-          "Name=tag:environment,Values=testing" \
-          "Name=tag:ci,Values=true" \
-          "Name=tag:git-ref,Values=${{ github.sha }}" \
-           --query 'Images[0].[ImageId]' --output text)
+      - name: Find AMI ID
+        id: ami_id
+        run: > 
+          ID=$(aws ec2 describe-images
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline*"
+          --query "Images[0].[ImageId]" 
+          --output text) &&
+          echo "::set-output name=id::$ID"
 
-  publish:
-    name: "Publish"
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Import Secrets
-        uses: hashicorp/vault-action@v2.1.2
-        with:
-          url: https://vault.online.ntnu.no:8200
-          token: ${{ secrets.VAULT_TOKEN }}
-          secrets: |
-              /aws/creds/gh-workflow-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              /aws/creds/gh-workflow-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
-        
-      - name: Wait for IAM eventual consistency
-        run: sleep 10
+      - name: Remove AMI
+        if: github.event_name != 'push'
+        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
 
-      - name: Install inspec
-        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build AWS AMI
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          arguments: -except=vagrant.testing -var environement=prod
-        env:
-          PACKER_LOG: 1
-
-      
+      - name: Tag AMI as production
+        if: github.event_name == 'push'
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true
