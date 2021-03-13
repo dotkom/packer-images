@@ -45,14 +45,19 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -except=vagrant.testing
+          arguments: -except=vagrant.testing -var='ami_tags={"ci":"true","git-ref":"${{ github.sha }}"}'
         env:
           PACKER_LOG: 1
 
       - name: Remove test ami
         run: |
           aws ec2 deregister-image --image-id \
-          $(aws ec2 describe-images --filter "Name=tag:environment,Values=testing" --query 'Images[0].[ImageId]' --output text)
+          $(aws ec2 describe-images --filter \
+          "Name=name,Values=dotkom/images/testing/hvm-ssd/ubuntu-focal-20.04-baseline-*" \
+          "Name=tag:environment,Values=testing" \
+          "Name=tag:ci,Values=true" \
+          "Name=tag:git-ref,Values=${{ github.sha }}" \
+           --query 'Images[0].[ImageId]' --output text)
 
   publish:
     name: "Publish"
@@ -70,7 +75,7 @@ jobs:
         
       - name: Wait for IAM eventual consistency
         run: sleep 10
-        
+
       - name: Install inspec
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
