@@ -46,11 +46,23 @@ source "amazon-ebs" "default" {
   ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
   instance_type = "t3a.nano"
   region        = "eu-west-1"
-  source_ami    = "ami-08bac620dc84221eb"
+
+  source_ami_filter {
+    filters = {
+       virtualization-type = "hvm"
+       name = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+       root-device-type = "ebs"
+    }
+
+    owners = ["099720109477"]
+    most_recent = true
+  }
+
   ssh_username  = "dotkom"
 
   tags = merge({
     packer      = true
+    source    = "{{ .SourceAMI }}"
   }, var.ami_tags)
 
   user_data = <<EOF
