@@ -5,9 +5,8 @@ on:
     # * is a special character in YAML so you have to quote this string
     - cron:  '* */24 * * *'
 
-
 jobs:
-  check:
+  compare:
     name: "Check if new source AMI is avaiable"
     runs-on: ubuntu-latest
     env:
@@ -55,8 +54,8 @@ jobs:
   packer:
     name: "Build AMI with updated source"
     runs-on: ubuntu-latest
-    needs: check
-    if: ${{ needs.check.outputs.source_id }} != ${{ needs.check.outputs.update_id }}
+    needs: compare
+    if: ${{ needs.compare.outputs.source_id }} != ${{ needs.compare.outputs.update_id }}
     env:
       AWS_DEFAULT_REGION: eu-west-1
     steps:
