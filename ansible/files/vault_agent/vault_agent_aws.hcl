@@ -1,4 +1,3 @@
-exit_after_auth = true
 pid_file = "./pidfile"
 
 auto_auth {
@@ -6,25 +5,25 @@ auto_auth {
        mount_path = "auth/aws"
        config = {
            type = "iam"
-           role = "default"
+           role = "aws_default"
        }
    }
 
    sink "file" {
-       wrap_ttl = "5m"
        config = {
-           path = "/tmp/vault/agent/token"
+           path = "/etc/consul_template.d/vault_token"
+           mode = 0000
        }
    }
 }
 
 cache {
-   use_auto_auth_token = true
+  use_auto_auth_token = true
 }
 
 listener "tcp" {
-   address = "127.0.0.1:8200"
-   tls_disable = true
+    address = "127.0.0.1:8200"
+    tls_disable = true
 }
 
 vault {

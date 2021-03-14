@@ -8,6 +8,15 @@
       owner: vault
       mode: 0640
 
+  - name: Create Vault agent data dir
+    file: 
+      path: /opt/vault_agent
+      recurse: true
+      state: directory
+      group: vault
+      owner: vault
+      mode: 0640
+
   - name: Add vault_agent config
     copy: 
       src: ./files/vault_agent/vault_agent_{{cloud_provider}}.hcl
@@ -15,3 +24,17 @@
       mode: 0640
       group: vault
       owner: vault
+
+  - name: Create a service unit
+    copy:
+      src: ./files/vault_agent/vault-agent.service
+      dest: /usr/lib/systemd/system/vault-agent.service
+      owner: vault
+      group: vault
+      mode: 0644
+  
+  - name: Enable Vault agent
+    systemd:
+      daemon_reload: yes
+      name: vault-agent
+      enabled: yes

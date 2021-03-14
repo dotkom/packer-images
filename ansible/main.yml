@@ -1,6 +1,7 @@
 ---
   - name: Setup image
-    hosts: default
+    hosts: localhost
+    connection: local
     become: yes
     tasks:
     - import_tasks: install_base.yml

@@ -27,11 +27,13 @@
       owner: consul
       mode: 0640
 
-  - name: Place runscript
-    copy:
-      src: ./files/consul_template/consul-template.sh
-      dest: /etc/consul_template.d/consul-template.sh
-      mode: a+x
+  - name: Create Consul Template vault token file
+    file: 
+      path: /etc/consul_template.d/vault_token
+      state: touch
+      group: consul
+      owner: consul
+      mode: 0600
 
   - name: Add Consul Template config
     copy: 
@@ -41,12 +43,11 @@
       group: consul
       owner: consul
 
-  - name: Add Consul Template scripts
-    copy: 
-      src: ./files/consul_template/scripts
-      dest: /etc/consul_template.d
+  - name: Add Consul Template scripts directory
+    file: 
+      path: /etc/consul_template.d/scripts
+      state: directory 
       mode: 0640
-      directory_mode: 0640
       group: consul
       owner: consul
 

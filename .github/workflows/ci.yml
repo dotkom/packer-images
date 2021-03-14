@@ -9,21 +9,33 @@ on:
       - main
 
 jobs:
-  check:
-    name: "Check"
+  ci:
+    name: "Packer CI"
     runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: eu-west-1
 
     steps:
       - name: Import Secrets
+        id: secrets
         uses: hashicorp/vault-action@v2.1.2
         with:
-          url: https://vault.online.ntnu.no.com:8200
-          method: github
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          url: https://vault.online.ntnu.no:8200
+          token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/creds/vault-gh-action-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-action-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
-              
+              /aws/creds/gh-workflow-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/gh-workflow-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+
+      - name: Wait for IAM eventual consistency
+        run: sleep 10
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION}}
+          
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -33,54 +45,30 @@ jobs:
           command: validate
           arguments: -syntax-only
           target: packer.pkr.hcl
-
-      - name: Build Vagrant artifact for testing
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          arguments: "-only '*.testing' -color=false -on-error=abort"
-          target: packer.pkr.hcl
-        env:
-          PACKER_LOG: 1
-
+          
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort"
+          arguments: > 
+            -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+            -except=vagrant.testing
           target: packer.pkr.hcl
-        env:
-          PACKER_LOG: 1
 
-      - name: Remove test ami
-        run: |
-          aws ec2 deregister-image --image-id \
-          $(aws ec2 describe-images --filter "Name=tag:environment,Values=testing" --query 'Images[0].[ImageId]')
+      - name: Find AMI ID
+        id: ami_id
+        run: > 
+          ID=$(aws ec2 describe-images
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline*"
+          --query "Images[0].[ImageId]" 
+          --output text) &&
+          echo "::set-output name=id::$ID"
 
-  publish:
-    name: "Publish"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Import Secrets
-        uses: hashicorp/vault-action@v2.1.2
-        with:
-          url: https://vault.online.ntnu.no.com:8200
-          method: github
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          secrets: |
-              aws/creds/vault-gh-action-packer-baseline access_key | AWS_ACCESS_KEY_ID ;
-              aws/creds/vault-gh-action-packer-baseline secret_key | AWS_SECRET_ACCESS_KEY ;
+      - name: Remove AMI
+        if: github.event_name != 'push'
+        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
 
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build AWS AMI
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          arguments: "-only '*.amazon-ebs.default' -color=false -on-error=abort -var environement=prod"
-          target: packer.pkr.hcl
-        env:
-          PACKER_LOG: 1
-
-      
+      - name: Tag AMI as production
+        if: github.event_name == 'push'
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true
