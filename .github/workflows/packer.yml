@@ -2,15 +2,21 @@ name: "Packer"
 
 on:
   push:
+    paths-ignore:
+    - .github
+    - inspec
     branches:
       - main
   pull_request:
+    paths-ignore:
+    - .github
+    - inspec
     branches:
       - main
 
 jobs:
   ci:
-    name: "Packer CI"
+    name: "Packer"
     runs-on: ubuntu-latest
     env:
       AWS_DEFAULT_REGION: eu-west-1
