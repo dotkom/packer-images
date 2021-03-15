@@ -3,8 +3,9 @@ name: "Update source AMI"
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '* */24 * * *'
-
+    - cron:  '0 6/24 * * *'
+  workflow_dispatch:
+  
 jobs:
   compare:
     name: "Check if new source AMI is avaiable"
@@ -36,9 +37,9 @@ jobs:
       - name: Find source AMI id
         run: > 
           ID=$(aws ec2 describe-images
-          --filter "Name=tag:production,true" "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline*"
+          --filter "Name=tag:production,Values=true" "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline*"
           --owners "self"
-          --query "reverse(sort_by(Images, &CreationDate))[0].{Tags:Tags[?Key == `source-ami`] | [0].Value}" 
+          --query 'reverse(sort_by(Images, &CreationDate))[0].{Tags:Tags[?Key == `source`] | [0].Value}'
           --output text) &&
           echo "::set-output name=source_id::$ID"
 
