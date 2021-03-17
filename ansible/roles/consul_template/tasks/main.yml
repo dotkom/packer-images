@@ -1,0 +1,42 @@
+---
+- name: Download Consul Template
+  get_url:
+    url: https://releases.hashicorp.com/consul-template/0.25.2/consul-template_0.25.2_linux_amd64.zip
+    dest: /tmp/consul-template.zip
+
+- name: Unzip Consul Template
+  unarchive:
+    remote_src: true
+    src: /tmp/consul-template.zip
+    dest: /usr/bin/
+
+- name: Create Consul template config dir
+  file: 
+    path: /etc/consul_template.d/
+    state: directory
+    recurse: true
+    mode: 0664
+
+- name: Add Consul Template config
+  copy: 
+    src: config.hcl
+    dest: /etc/consul_template.d/config.hcl
+    mode: 0664
+  
+- name: Add Consul Template entrypoint
+  template: 
+    src: consul_template_entrypoint.sh.j2
+    dest: /usr/bin/consul_template_entrypoint.sh
+    mode: 0774
+
+- name: Add Consul Template service
+  copy: 
+    src: consul-template.service
+    dest: /usr/lib/systemd/system/consul-template.service
+    mode: 0664
+
+- name: Enable consul template
+  service:
+    name: consul-template
+    enabled: true
+    state: started

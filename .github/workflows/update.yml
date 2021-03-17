@@ -4,7 +4,8 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron:  '* */24 * * *'
-
+  workflow_dispatch:
+    
 jobs:
   compare:
     name: "Check if new source AMI is avaiable"
@@ -93,9 +94,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: > 
-            -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
-            -except=vagrant.testing
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
           target: packer.pkr.hcl
 
       - name: Find AMI ID

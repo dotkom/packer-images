@@ -56,9 +56,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: > 
-            -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
-            -except=vagrant.testing
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
           target: packer.pkr.hcl
 
       - name: Find AMI ID

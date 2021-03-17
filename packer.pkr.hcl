@@ -33,12 +33,6 @@ variable "ami_tags" {
 locals {
   cloud_provider_map = {
     amazon-ebs = "aws"
-    vagrant    = "aws"
-  }
-
-  user_map = {
-    amazon-ebs = "dotkom"
-    vagrant    = "ubuntu"
   }
 }
 
@@ -65,6 +59,15 @@ source "amazon-ebs" "default" {
     source    = "{{ .SourceAMI }}"
   }, var.ami_tags)
 
+  temporary_iam_instance_profile_policy_document {
+    Statement {
+        Action   = ["ec2:DescribeInstances", "iam:GetInstanceProfile"]
+        Effect   = "Allow"
+        Resource = ["*"]
+    }
+    Version = "2012-10-17"
+  }
+
   user_data = <<EOF
 #cloud-config
 system_info:
@@ -73,14 +76,8 @@ system_info:
 EOF
 }
 
-source "vagrant" "testing" {
-  communicator = "ssh"
-  source_path  = "ubuntu/focal64"
-  provider     = "virtualbox"
-}
-
 build {
-  sources = ["source.amazon-ebs.default", "vagrant.testing"]
+  sources = ["source.amazon-ebs.default"]
 
   provisioner "shell" {
     inline = [
@@ -102,7 +99,7 @@ build {
       "-e vault_ssh_host_signer_path=${var.vault_ssh_host_signer_path}",
       "-e cloud_provider=${local.cloud_provider_map[source.type]}",
       "-e ansible_python_interpreter=/usr/bin/python3",
-      "-u ${local.user_map[source.type]}"
+      "-u dotkom"
     ]
   }
 
@@ -115,7 +112,8 @@ build {
     inline = [
       "curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec",
       "sudo inspec exec --chef-license=accept /tmp/inspec",
-      "sudo apt-get remove inspec -y"
+      "sudo apt-get remove inspec -y",
+      "consul validate /etc/consul.d/"
     ]
   }
 

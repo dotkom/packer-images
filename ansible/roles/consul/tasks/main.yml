@@ -1,0 +1,97 @@
+- name: Install consul autocompletion
+  shell: consul -autocomplete-install && complete -C /usr/bin/consul consul
+  ignore_errors: yes
+  args:
+    executable: /bin/bash
+
+- name: Remove default consul config
+  file: 
+    path: /etc/consul.d/consul.hcl
+    state: absent
+
+- name: Create Consul template dir
+  file: 
+    path: /etc/consul.d/templates
+    state: directory
+    recurse: true
+    group: consul
+    owner: consul
+    mode: 0664
+
+- name: Add consul client config template
+  template: 
+    src: consul.hcl.tpl.j2
+    dest: /etc/consul.d/templates/consul.hcl.tpl
+    mode: 0664
+
+- name: Add consul ca template
+  copy: 
+    src: ca.pem.tpl
+    dest: /etc/consul.d/templates/ca.pem.tpl
+    mode: 0666
+
+- name: Create Consul ssl dir
+  file: 
+    path: /etc/consul.d/ssl
+    state: directory
+    recurse: true
+    group: consul
+    owner: consul
+    mode: 0664
+
+- name: Touch consul ca file
+  file: 
+    path: /etc/consul.d/ssl/ca.pem
+    state: touch
+    owner: consul
+    group: consul
+    mode: 0666
+
+- name: Add consul template config
+  copy:
+    src: consul_template_consul.hcl
+    dest: /etc/consul_template.d/consul.hcl
+
+- name: Enable consul
+  service:
+    name: consul
+    state: started
+    enabled: true
+
+- name: Delete symlinked /etc/resolv.conf
+  file: 
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Recreate /etc/resolv.conf
+  copy: 
+    src: ./files/resolv.conf
+    dest: /etc/resolv.conf
+    mode: 0640
+    group: root
+    owner: root
+
+- name: Add dnsmasq config
+  copy: 
+    src: ./files/dnsmasq.conf
+    dest: /etc/dnsmasq.d/dnsmasq.conf
+    mode: 0640
+    group: root
+    owner: root
+
+- name: Disable systemd-resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+    
+- name: Enable dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+    enabled: true
+
+- name: Restart consul template
+  service:
+    name: consul-template
+    state: restarted

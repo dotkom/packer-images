@@ -1,0 +1,48 @@
+
+---
+- name: Download vault client signer public key
+  get_url:
+    url: "{{ vault_url }}/v1/{{vault_ssh_client_signer_path}}/public_key"
+    dest: /etc/ssh/trusted-user-ca-keys.pem
+
+- name: Configure sshd
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regex: "^(#)?{{item.key}}"
+    line: "{{item.key}} {{item.value}}"
+    state: present
+  loop:
+    - { key: "PermitRootLogin", value: "no" }
+    - { key: "PasswordAuthentication", value: "no" } 
+    - { key: "HostKey", value: "/etc/ssh/ssh_host_rsa_key" }
+    - { key: "HostCertificate", value: "/etc/ssh/ssh_host_rsa_key-cert.pub" }
+    - { key: "TrustedUserCAKeys", value: "/etc/ssh/trusted-user-ca-keys.pem" }
+    
+- name: Add SSH client cert signer ca template
+  copy: 
+    src: trusted-user-ca-keys.pem.tpl
+    dest: /etc/ssh/trusted-user-ca-keys.pem.tpl
+    mode: 0664
+
+- name: Add SSH host cert template
+  copy: 
+    src: ssh_host_rsa_key-cert.pub.tpl
+    dest: /etc/ssh/ssh_host_rsa_key-cert.pub.tpl
+    mode: 0660
+
+- name: Add Consul Template ssh template config
+  copy: 
+    src: consul_template_ssh.hcl
+    dest: /etc/consul_template.d/ssh.hcl
+    mode: 0664
+
+- name: Restart sshd
+  service:
+    name: sshd
+    enabled: true
+    state: restarted
+
+- name: Restart consul template
+  service:
+    name: consul-template
+    state: restarted

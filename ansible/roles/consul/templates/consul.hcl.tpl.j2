@@ -1,0 +1,31 @@
+#jinja2:variable_start_string:'[%', variable_end_string:'%]', trim_blocks: False
+
+  server = false
+
+  {% if cloud_provider == "aws" %}
+  datacenter = "aws-eu-west-1"
+  {% elif cloud_provider == "azure" %}
+  datacenter = "azure-north-europe"
+  {% endif %}
+
+  data_dir = "/opt/consul"
+  verify_incoming = false
+  verify_outgoing = true
+  verify_server_hostname = true
+  ca_file = "/etc/consul.d/ca.pem"
+  encrypt = "{{ with secret "secret/data/consul/config/encryption" }}{{ .Data.data.key}}{{ end }}"
+  auto_encrypt {
+    tls = true
+  }
+  acl {
+      enabled = true
+      default_policy = "deny"
+      enable_token_persistence = true
+  }
+
+{% if cloud_provider == "aws" %} 
+retry_join = ["provider=aws tag_key=consul tag_value=server"]
+{% elif cloud_provider == "azure" %}
+retry_join = ["provider=azure tag_name=consul tag_value=server"]
+{% endif %}
+
