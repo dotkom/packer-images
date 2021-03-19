@@ -18,18 +18,6 @@
     owner: consul
     mode: 0664
 
-- name: Add consul client config template
-  template: 
-    src: consul.hcl.tpl.j2
-    dest: /etc/consul.d/templates/consul.hcl.tpl
-    mode: 0664
-
-- name: Add consul ca template
-  copy: 
-    src: ca.pem.tpl
-    dest: /etc/consul.d/templates/ca.pem.tpl
-    mode: 0666
-
 - name: Create Consul ssl dir
   file: 
     path: /etc/consul.d/ssl
@@ -38,25 +26,6 @@
     group: consul
     owner: consul
     mode: 0664
-
-- name: Touch consul ca file
-  file: 
-    path: /etc/consul.d/ssl/ca.pem
-    state: touch
-    owner: consul
-    group: consul
-    mode: 0666
-
-- name: Add consul template config
-  copy:
-    src: consul_template_consul.hcl
-    dest: /etc/consul_template.d/consul.hcl
-
-- name: Enable consul
-  service:
-    name: consul
-    state: started
-    enabled: true
 
 - name: Delete symlinked /etc/resolv.conf
   file: 
@@ -90,8 +59,3 @@
     name: dnsmasq
     state: started
     enabled: true
-
-- name: Restart consul template
-  service:
-    name: consul-template
-    state: restarted

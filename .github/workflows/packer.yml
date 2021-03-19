@@ -58,7 +58,9 @@ jobs:
           command: build
           arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
           target: packer.pkr.hcl
-
+        env:
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+          
       - name: Find AMI ID
         id: ami_id
         run: > 

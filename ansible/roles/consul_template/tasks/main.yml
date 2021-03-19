@@ -17,10 +17,10 @@
     recurse: true
     mode: 0664
 
-- name: Add Consul Template config
+- name: Add Consul Template vault config
   copy: 
-    src: config.hcl
-    dest: /etc/consul_template.d/config.hcl
+    src: vault.hcl
+    dest: /etc/consul_template.d/vault.hcl
     mode: 0664
   
 - name: Add Consul Template entrypoint
@@ -34,9 +34,3 @@
     src: consul-template.service
     dest: /usr/lib/systemd/system/consul-template.service
     mode: 0664
-
-- name: Enable consul template
-  service:
-    name: consul-template
-    enabled: true
-    state: started

@@ -1,8 +1,9 @@
-title 'Ensure consul is setup properly'
+title 'Ensure consul is installed, but not running'
 
-describe service('consul') do
-    it { should be_enabled }
-    it { should be_running }
+describe service('consul') do 
+    it {should_not be_enabled}
+    it {should_not be_running}
+    it { should be_installed }
 end
 
 describe user('consul') do

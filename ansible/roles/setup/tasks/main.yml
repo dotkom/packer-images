@@ -22,37 +22,10 @@
     createhome: yes
     shell: /bin/bash
 
-- name: Add HashiCorp apt signing key
-  apt_key:
-    url: https://apt.releases.hashicorp.com/gpg
-    state: present
-
-- name: Add HashiCorp apt Repo
-  apt_repository:
-    repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-    state: present
-
-- name: Upgrade the OS
-  apt:
-    upgrade: dist
-    update-cache: true
-
-- name: Install base packages
-  apt:
-    pkg: 
-    - zip
-    - python3-pip
-    - dnsmasq
-    - jq
-    - moreutils
-    - awscli
-    - ruby
-    - consul={{consul_version}}
-    - vault={{vault_version}}
-    state: present
-
 - name: Install vault autocompletion
   shell: vault -autocomplete-install && complete -C /usr/bin/vault vault
   ignore_errors: yes
   args:
     executable: /bin/bash
+
+    
