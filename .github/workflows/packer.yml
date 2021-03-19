@@ -60,7 +60,8 @@ jobs:
           target: packer.pkr.hcl
         env:
           VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-          
+          VAULT_ADDR: https://vault.online.ntnu.no:8200
+
       - name: Find AMI ID
         id: ami_id
         run: > 
