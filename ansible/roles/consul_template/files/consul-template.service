@@ -6,16 +6,17 @@ After=network-online.target
 
 [Service]
 Environment="VAULT_ADDR=https://vault.online.ntnu.no:8200"
-Restart=on-failure
-KillSignal=SIGINT
+KillSignal=SIGKILL
 ExecStart=/usr/bin/consul_template_entrypoint.sh
-ExecReload=/bin/kill --signal HUP $MAINPID
+ExecReload=/bin/kill --signal KILL $MAINPID
 KillMode=process
-KillSignal=SIGINT
-Restart=on-failure
 User=root
 Group=root
 LimitNOFILE=65536
+Restart=always
+RestartSec=10
+StartLimitInterval=50
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

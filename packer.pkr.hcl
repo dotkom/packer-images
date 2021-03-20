@@ -32,6 +32,7 @@ source "amazon-ebs" "default" {
   tags = merge({
     packer = true
     source = "{{ .SourceAMI }}"
+    Name   = "Packer baseline"
   }, var.ami_tags)
 
   temporary_iam_instance_profile_policy_document {
