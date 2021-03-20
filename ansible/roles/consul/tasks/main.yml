@@ -4,11 +4,6 @@
   args:
     executable: /bin/bash
 
-- name: Remove default consul config
-  file: 
-    path: /etc/consul.d/consul.hcl
-    state: absent
-
 - name: Create Consul template dir
   file: 
     path: /etc/consul.d/templates
@@ -16,7 +11,7 @@
     recurse: true
     group: consul
     owner: consul
-    mode: 0664
+    mode: 0751
 
 - name: Create Consul ssl dir
   file: 
@@ -25,7 +20,7 @@
     recurse: true
     group: consul
     owner: consul
-    mode: 0664
+    mode: 0751
 
 - name: Delete symlinked /etc/resolv.conf
   file: 
