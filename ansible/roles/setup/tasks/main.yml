@@ -27,5 +27,4 @@
   ignore_errors: yes
   args:
     executable: /bin/bash
-
     
