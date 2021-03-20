@@ -1,10 +1,4 @@
-
 ---
-- name: Place trusted user ca
-  copy:
-    content: "{{ ssh_trusted_user_ca }}"
-    dest: /etc/ssh/trusted-user-ca-keys.pem
-
 - name: Configure sshd
   lineinfile:
     path: "/etc/ssh/sshd_config"
