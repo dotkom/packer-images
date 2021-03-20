@@ -1,0 +1,4 @@
+#!/bin/bash
+
+exec env VAULT_TOKEN=$(vault login -method {{ cloud_provider }} -token-only role=default) \
+    /usr/bin/consul-template -config=/etc/consul_template.d

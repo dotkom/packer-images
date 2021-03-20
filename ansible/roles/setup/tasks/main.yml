@@ -16,7 +16,16 @@
   user:
     name: dotkom
     append: true
-    groups: wheel
+    groups:
+      - wheel
     state: present
     createhome: yes
     shell: /bin/bash
+
+- name: Install vault autocompletion
+  shell: vault -autocomplete-install && complete -C /usr/bin/vault vault
+  ignore_errors: yes
+  args:
+    executable: /bin/bash
+
+    
