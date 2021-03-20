@@ -51,6 +51,8 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo touch /etc/ssh/trusted-user-ca-keys.pem",
+      "sudo sh -c  \"echo '${local.ssh_trusted_user_ca}' > /etc/ssh/trusted-user-ca-keys.pem\"",
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
     ]
   }
@@ -59,7 +61,6 @@ build {
     playbook_file = "./ansible/playbook.yml"
     playbook_dir  = "./ansible"
     extra_arguments = [
-      "-e ssh_trusted_user_ca='${local.ssh_trusted_user_ca}'",
       "-e cloud_provider=${local.cloud_provider_map[source.type]}",
       "-e ansible_python_interpreter=/usr/bin/python3",
       "-u dotkom"
