@@ -31,18 +31,23 @@
   copy: 
     src: ./files/resolv.conf
     dest: /etc/resolv.conf
-    mode: 0640
+    mode: 0664
     group: root
     owner: root
 
 - name: Add dnsmasq config
-  copy: 
-    src: ./files/dnsmasq.conf
+  template: 
+    src: ./templates/dnsmasq.conf.j2
     dest: /etc/dnsmasq.d/dnsmasq.conf
-    mode: 0640
+    mode: 0664
     group: root
     owner: root
 
+- name: Update dhcp config
+  lineinfile:
+    dest: /etc/dhcp/dhclient.conf
+    line: "supersede domain-name-servers 127.0.0.1, 169.254.169.253;"
+    
 - name: Disable systemd-resolved
   service:
     name: systemd-resolved

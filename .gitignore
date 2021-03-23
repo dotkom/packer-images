@@ -1,2 +1,3 @@
 output-testing/
 ec2_default.pem
+*.pem

@@ -22,12 +22,12 @@ describe file('/opt/consul') do
 end
 
 describe file('/etc/resolv.conf') do
-    its('mode') { should cmp '0640' }
+    its('mode') { should cmp '0664' }
     it { should be_owned_by 'root'}
 end
 
 describe file('/etc/dnsmasq.d/dnsmasq.conf') do
-    its('mode') { should cmp '0640' }
+    its('mode') { should cmp '0664' }
     it { should be_owned_by 'root'}
 end
 

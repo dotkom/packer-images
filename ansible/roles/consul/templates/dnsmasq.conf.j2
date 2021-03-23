@@ -2,5 +2,8 @@ port=53
 bind-interfaces
 listen-address=127.0.0.1
 server=/consul/127.0.0.1#8600
-server=8.8.8.8
+
+{% if cloud_provider == "aws" %}
+server=169.254.169.253
+{% endif %}
 server=1.1.1.1
