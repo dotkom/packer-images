@@ -37,7 +37,7 @@
 
 - name: Add dnsmasq config
   template: 
-    src: ./templates/dnsmasq.conf
+    src: ./templates/dnsmasq.conf.j2
     dest: /etc/dnsmasq.d/dnsmasq.conf
     mode: 0664
     group: root
