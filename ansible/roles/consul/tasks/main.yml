@@ -4,23 +4,29 @@
   args:
     executable: /bin/bash
 
-- name: Create Consul template dir
+- name: Touch CA file
   file: 
-    path: /etc/consul.d/templates
-    state: directory
-    recurse: true
+    path: /etc/consul.d/ca.crt
+    state: touch
     group: consul
     owner: consul
-    mode: 0751
+    mode: 0664
 
-- name: Create Consul ssl dir
+- name: Touch cert file
   file: 
-    path: /etc/consul.d/ssl
-    state: directory
-    recurse: true
+    path: /etc/consul.d/agent.crt
+    state: touch
     group: consul
     owner: consul
-    mode: 0751
+    mode: 0664
+
+- name: Touch cert key file
+  file: 
+    path: /etc/consul.d/agent.key
+    state: touch
+    group: consul
+    owner: consul
+    mode: 0660
 
 - name: Delete symlinked /etc/resolv.conf
   file: 
