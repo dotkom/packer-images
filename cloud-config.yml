@@ -76,6 +76,5 @@ packages:
   - ruby
   - consul=1.9.4
   - vault=1.6.3
-  - nomad=1.0.4
   
 package_update: true
