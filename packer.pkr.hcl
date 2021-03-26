@@ -35,15 +35,6 @@ source "amazon-ebs" "default" {
     Name   = "Packer baseline"
   }, var.ami_tags)
 
-  temporary_iam_instance_profile_policy_document {
-    Statement {
-      Action   = ["ec2:DescribeInstances", "iam:GetInstanceProfile"]
-      Effect   = "Allow"
-      Resource = ["*"]
-    }
-    Version = "2012-10-17"
-  }
-
   user_data_file = "./cloud-config.yml"
 }
 
