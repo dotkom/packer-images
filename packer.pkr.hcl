@@ -13,9 +13,12 @@ locals {
 
 source "amazon-ebs" "default" {
   ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
-  instance_type = "t3.small"
+  spot_instance_types = ["t3.small"]
+  spot_price = "auto"
   region        = "eu-north-1"
-
+  associate_public_ip_address = "true"
+  ssh_interface = "public_ip"
+  
   source_ami_filter {
     filters = {
       virtualization-type = "hvm"
