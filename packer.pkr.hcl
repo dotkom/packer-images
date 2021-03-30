@@ -13,8 +13,8 @@ locals {
 
 source "amazon-ebs" "default" {
   ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-baseline-${local.timestamp}"
-  instance_type = "t3a.nano"
-  region        = "eu-west-1"
+  instance_type = "t3.small"
+  region        = "eu-north-1"
 
   source_ami_filter {
     filters = {

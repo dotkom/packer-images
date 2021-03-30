@@ -19,7 +19,7 @@ jobs:
     name: "Packer"
     runs-on: ubuntu-latest
     env:
-      AWS_DEFAULT_REGION: eu-west-1
+      AWS_DEFAULT_REGION: eu-north-1
 
     steps:
       - name: Import Secrets
