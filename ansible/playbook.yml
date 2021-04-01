@@ -5,6 +5,7 @@
     become: yes
     roles:
       - setup
-      - consul_template
+      - consul-template
       - ssh
       - consul
+      - prometheus-node-exporter

@@ -1,0 +1,20 @@
+[Unit]
+Description="Prometheus node exporter"
+Documentation=https://prometheus.io/docs/guides/node-exporter/
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+KillSignal=SIGKILL
+ExecStart=/usr/bin/node-exporter
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+User=root
+Group=root
+LimitNOFILE=65536
+Restart=always
+RestartSec=1
+StartLimitInterval=10
+StartLimitBurst=5
+[Install]
+WantedBy=multi-user.target
