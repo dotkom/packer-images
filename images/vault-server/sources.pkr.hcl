@@ -1,5 +1,5 @@
 source "amazon-ebs" "base" {
-  ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-nomad-client-${local.timestamp}"
+  ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-vault-server-${local.timestamp}"
   spot_instance_types = ["t3.small"]
   spot_price = "auto"
   region        = var.aws_region
@@ -21,8 +21,7 @@ source "amazon-ebs" "base" {
   tags = merge({
     packer = true
     source = "{{ .SourceAMI }}"
-    Name   = "Nomad client"
-    consul_datacenter = "{{ var.aws_consul_datacenter }}"
-    nomad_datacenter = "{{ var.aws_nomad_datacenter }}"
-  }, var.ami_tags)
+    Name   = "Vault server"
+    consul_datacenter = "${var.aws_consul_datacenter}"
+  }, var.aws_ami_tags)
 }

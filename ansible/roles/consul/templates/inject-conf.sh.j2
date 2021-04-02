@@ -13,7 +13,7 @@ if VAULT_TOKEN=$(vault login -method {{ cloud_provider }} -token-only role={{ co
     consul_tempate_flags="-once -config '/etc/consul/template/vault.hcl' -template"
     
     consul-template -once -config /etc/consul_template.d/vault.hcl \
-        -template "/etc/consul.d/consul.hcl.tpl:/etc/consul.d/consul.hcl"
+        -template "/etc/consul.d/consul.hcl.tpl:/etc/consul.d/consul.hcl" \
         -template "/etc/consul.d/ca.crt.tpl:/etc/consul.d/ca.crt" {% if consul_server %} \
         -template "/etc/consul.d/agent.crt.tpl:/etc/consul.d/agent.crt" \
         -template "/etc/consul.d/agent.key.tpl:/etc/consul.d/agent.key"

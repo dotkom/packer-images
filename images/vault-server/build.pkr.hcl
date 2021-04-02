@@ -9,7 +9,6 @@ build {
       "-e cloud_provider=${local.cloud_provider_map[source.type]}",
       "-e ansible_python_interpreter=/usr/bin/python3",
       "-e consul_datacenter=${var.aws_consul_datacenter}",
-      "-e nomad_datacenter=${var.aws_nomad_datacenter}",
       "-u dotkom",
     ]
   }
@@ -21,9 +20,9 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo inspec exec --chef-license=accept /tmp/inspec/base"
-      "sudo inspec exec --chef-license=accept /tmp/inspec/consul"
-      "sudo inspec exec --chef-license=accept /tmp/inspec/nomad"
+      "sudo inspec exec --chef-license=accept /tmp/inspec/base",
+      "sudo inspec exec --chef-license=accept /tmp/inspec/consul",
+      "sudo inspec exec --chef-license=accept /tmp/inspec/vault"
     ]
   }
 }

@@ -10,12 +10,6 @@ variable "aws_consul_datacenter" {
   description = "Which consul datacenter should the resulting AMI belong to."
 }
 
-variable "aws_nomad_datacenter" {
-  type = string
-  default = "aws-eu-north-1"
-  description = "Which nomad datacenter should the resulting AMI belong to."
-}
-
 variable "aws_ami_tags" {
   type    = map(string)
   default = {}

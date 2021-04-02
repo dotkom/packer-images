@@ -1,14 +1,14 @@
 
 listener "tcp" {
-    address = "{{ sockaddr "GetPublicIP" }}:8200"
+    address = "0.0.0.0:8200"
     tls_cert_file = "/etc/vault.d/agent.crt"
     tls_key_file = "/etc/vault.d/agent.pem"
     tls_client_ca_file = "/etc/vault.d/ca.crt"
 }
 
 seal "awskms" {
-    region = "${kms_key_region}"
-    kms_key_id = "${kms_key_id}"
+    region = "eu-north-1"
+    kms_key_id = "73a0cb28-b711-4f2b-85d4-5145e2c0a8e8"
 }
 
 storage "dynamodb" {
@@ -18,7 +18,6 @@ storage "dynamodb" {
 }
 
 service_registration "consul" {
-    token = "${consul_acl_token}"
     service_address = ""
 }
 
@@ -27,7 +26,7 @@ telemetry {
   disable_hostname = true
 }
 
-api_addr = "https://vault.online.ntnu.no:8200"
-cluster_addr = "https://{{ sockaddr "GetPublicIP" }}:8201"
+api_addr = "https://{{ sockaddr "GetPublicIP" }}:8200"
+cluster_addr = "https://{{ sockaddr "GetPrivateIP" }}:8201"
 ui = true
 

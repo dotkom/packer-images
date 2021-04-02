@@ -4,8 +4,8 @@
     connection: local
     become: yes
     vars: 
-      consul_template_entrypoint_vault_role: vault-server
+      is_vault_server: true
+      consul_node_name_prefix: vault-server
     roles:
       - consul
-      - consul-template-entrypoint
-      - vault
+      - vault-server
