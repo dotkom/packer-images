@@ -1,0 +1,10 @@
+---
+  - name: Setup image
+    hosts: localhost
+    connection: local
+    become: yes
+    roles:
+      - base
+      - consul-template
+      - consul
+      - prometheus-node-exporter

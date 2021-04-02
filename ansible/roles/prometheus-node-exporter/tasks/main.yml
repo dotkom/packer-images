@@ -1,22 +1,24 @@
 - name: Download Proemetheus node exporter
   get_url:
-    url: https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+    url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
     dest: /tmp/node-exporter.tar.gz
 
 - name: Unzip prometheus node exporter
   unarchive:
     remote_src: true
     src: /tmp/node-exporter.tar.gz
-    dest: /tmp/node-exporter
+    dest: /tmp/
 
 - name: Copy executable to right location
   copy:
-    src: /tmp/node-exporter/node_exporter-1.1.2.linux-amd64/node_exporter
-    dest: /usr/bin/node_exporter
+    src: /tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
+    dest: /usr/bin/node-exporter
+    mode: 555
+    remote_src: true
 
 - name: Add Service file
   copy: 
-    src: node-exporter.service
+    src: ./files/node-exporter.service
     dest: /usr/lib/systemd/system/node-exporter.service
     mode: 0664
 

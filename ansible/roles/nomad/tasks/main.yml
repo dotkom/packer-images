@@ -1,7 +1,7 @@
 - name: Install packages
   apt:
     pkg: 
-      - consul={{ consul_version }}
+      - nomad={{ nomad_version }}
       - dnsmasq
     state: present
 
@@ -10,19 +10,6 @@
   ignore_errors: yes
   args:
     executable: /bin/bash
-
-- name: Remove default config
-  file: 
-    path: /etc/consul.d/consul.hcl
-    state: absent
-
-- name: Touch config config
-  file: 
-    path: /etc/consul.d/consul.hcl
-    state: touch
-    group: consul
-    owner: consul
-    mode: 660
 
 - name: Touch CA file
   file: 
@@ -56,10 +43,10 @@
     mode: 0770
 
 - name: Add config injection script
-  template: 
-    src: ./templates/inject-conf.sh.j2
+  copy: 
+    src: ./files/inject-conf.{{(consul_server | ternary('server', 'client'))}}.sh
     dest: /etc/consul.d/inject-conf.sh
-    mode: 0774
+    mode: 0664
     group: consul
     owner: consul
 
@@ -80,14 +67,6 @@
     group: consul
     owner: consul
   when: consul_server | bool
-
-- name: Add consul service file
-  copy: 
-    src: ./files/consul.service
-    dest: /lib/systemd/system/consul.service
-    mode: 0664
-    group: root
-    owner: root
 
 - name: Add consul template config
   template: 
@@ -124,7 +103,7 @@
 
 - name: Add consul config template
   template: 
-    src: ./templates/consul.hcl.tpl.j2
+    src: ./templates/consul.{{ ( consul_server | ternary('server', 'client') ) }}.tpl.j2
     dest: /etc/consul.d/consul.hcl.tpl
     mode: 0660
     group: consul
@@ -137,26 +116,6 @@
     mode: 0664
     group: root
     owner: root
-
-- name: Add consul config injector service
-  template: 
-    src: ./templates/consul-config-injector.service.j2
-    dest: /lib/systemd/system/consul-config-injector.service
-    mode: 0664
-    group: root
-    owner: root
-
-- name: Enable consul
-  service:
-    name: consul
-    state: stopped
-    enabled: true
-
-- name: Enable consul config injector
-  service:
-    name: consul-config-injector
-    state: stopped
-    enabled: true
 
 - name: Recreate /etc/resolv.conf
   copy: 

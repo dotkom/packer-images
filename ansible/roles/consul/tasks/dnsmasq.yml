@@ -1,0 +1,46 @@
+- name: Recreate /etc/resolv.conf
+  copy: 
+    src: ./files/resolv.conf
+    dest: /etc/resolv.conf
+    mode: 0664
+    group: root
+    owner: root
+
+- name: Delete symlinked /etc/resolv.conf
+  file: 
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Recreate /etc/resolv.conf
+  copy: 
+    src: ./files/resolv.conf
+    dest: /etc/resolv.conf
+    mode: 0664
+    group: root
+    owner: root
+
+- name: Add dnsmasq config
+  template: 
+    src: ./templates/dnsmasq.conf.j2
+    dest: /etc/dnsmasq.d/dnsmasq.conf
+    mode: 0664
+    group: root
+    owner: root
+
+- name: Update dhcp config
+  lineinfile:
+    dest: /etc/dhcp/dhclient.conf
+    line: "supersede domain-name-servers 127.0.0.1, 169.254.169.253;"
+    
+- name: Disable systemd-resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+    
+- name: Enable dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+    enabled: true
+

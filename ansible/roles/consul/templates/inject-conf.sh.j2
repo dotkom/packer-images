@@ -1,0 +1,24 @@
+#!/bin/bash
+export VAULT_ADDR=https://vault.online.ntnu.no:8200
+export CONSUL_NODE_NAME={{consul_node_name_prefix}}-$(uuidgen)
+
+echo "Node name: $CONSUL_NODE_NAME"
+echo "Logging in with vault role: {{ consul_server_vault_role }}"
+
+if VAULT_TOKEN=$(vault login -method {{ cloud_provider }} -token-only role={{ consul_server_vault_role }}); then
+    export VAULT_TOKEN
+    
+    echo "Vault login successful"
+
+    consul_tempate_flags="-once -config '/etc/consul/template/vault.hcl' -template"
+    
+    consul-template -once -config /etc/consul_template.d/vault.hcl \
+        -template "/etc/consul.d/consul.hcl.tpl:/etc/consul.d/consul.hcl"
+        -template "/etc/consul.d/ca.crt.tpl:/etc/consul.d/ca.crt" {% if consul_server %} \
+        -template "/etc/consul.d/agent.crt.tpl:/etc/consul.d/agent.crt" \
+        -template "/etc/consul.d/agent.key.tpl:/etc/consul.d/agent.key"
+{% endif %}
+else
+    echo "Vault login failed... "
+    exit 1
+fi

@@ -1,0 +1,11 @@
+---
+  - name: Setup image
+    hosts: localhost
+    connection: local
+    become: yes
+    vars: 
+      consul_template_entrypoint_vault_role: vault-server
+    roles:
+      - consul
+      - consul-template-entrypoint
+      - vault

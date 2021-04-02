@@ -1,0 +1,23 @@
+---
+  - name: Setup image
+    hosts: localhost
+    connection: local
+    become: yes
+    vars: 
+      consul_server: true
+      consul_template_entrypoint_vault_role: nomad-client
+    roles:
+      - consul
+      - consul-template-entrypoint
+    post_tasks:
+      - name: Add inspec profiles
+        copy: 
+          src: ../../inspec
+          dest: /tmp
+
+      - name: Run inspec
+        command: inspec exec --chef-license=accept /tmp/inspec/{{ item }}
+        with_items:
+          - base
+          - consul
+          - nomad

@@ -1,0 +1,11 @@
+consul_version: 1.9.4
+consul_primary_datacenter: aws-eu-north-1
+consul_server_vault_role: consul-server
+consul_client_vault_role: consul-client
+consul_auto_join_key: consul
+consul_auto_join_value: server
+consul_bootstrap_expect: 1
+consul_server: false
+consul_node_name_prefix: consul-node
+consul_acl_secret_path: default-consul-node
+is_vault_server: false

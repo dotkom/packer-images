@@ -1,0 +1,36 @@
+template {
+  source      = "/etc/consul.d/ca.pub.tpl"
+  destination = "/etc/consul.d/ca.pub"
+  command     = "consul reload"
+  prems       = 0774
+}
+
+{% if consul_server %}
+template {
+  source      = "/etc/consul.d/agent.crt.tpl"
+  destination = "/etc/consul.d/agent.crt"
+  command     = "consul reload"
+  prems       = 0774
+}
+
+template {
+  source      = "/etc/consul.d/agent.key.tpl"
+  destination = "/etc/consul.d/agent.key"
+  command     = "consul reload"
+  prems       = 0770
+}
+
+template {
+  source      = "/etc/consul.d/agent.key.tpl"
+  destination = "/etc/consul.d/agent.key"
+  command     = "consul reload"
+  prems       = 0770
+}
+
+template {
+  source      = "/etc/consul.d/gossip.key.tpl"
+  destination = "/opt/consul/gossip/gossip.key"
+  command     = "/bin/rotate_consul_key.sh"
+  perms       = 0770
+}
+ {% endif %}

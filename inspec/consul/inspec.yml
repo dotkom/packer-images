@@ -1,0 +1,5 @@
+name: consul
+title: Consul
+summary: Verify Consul 
+supports:
+  - platform-family: linux

@@ -1,0 +1,19 @@
+[Unit]
+Description=Inject consul config
+After=network.target
+{%if is_vault_server %}
+Requires=vault.service
+{% endif %}
+
+[Service]
+Type=oneshot
+ExecStart=/etc/consul.d/inject-conf.sh
+Restart=on-failure
+RemainAfterExit=true
+StandardOutput=journal
+RestartSec=3
+StartLimitInterval=10
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

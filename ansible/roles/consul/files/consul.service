@@ -1,0 +1,21 @@
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+Requires=consul-config-injector.service
+
+[Service]
+User=consul
+Group=consul
+ExecStart=/usr/bin/consul agent -config-dir=/etc/consul.d/
+ExecReload=/usr/bin/consul reload
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+RestartSec=3
+StartLimitInterval=30
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
