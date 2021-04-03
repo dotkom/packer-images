@@ -23,7 +23,7 @@ jobs:
         with:
           command: build
           arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
-          target: iamges/base
+          target: images/base
 
       - name: Find AMI ID
         id: ami_id
@@ -61,7 +61,7 @@ jobs:
         with:
           command: build
           arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
-          target: iamges/${{ matrix.image }}
+          target: images/${{ matrix.image }}
 
       - name: Find AMI ID
         id: ami_id
