@@ -15,6 +15,26 @@ jobs:
     name: "Packer build base"
     runs-on: ubuntu-latest
     steps:
+      - name: Import Secrets
+        id: secrets
+        uses: hashicorp/vault-action@v2.1.2
+        with:
+          url: https://vault.online.ntnu.no:8200
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+              /aws/creds/gh-workflow-packer-images access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/gh-workflow-packer-images secret_key | AWS_SECRET_ACCESS_KEY ;
+
+      - name: Wait for IAM eventual consistency
+        run: sleep 10
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION}}
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -53,6 +73,26 @@ jobs:
     env:
       AWS_DEFAULT_REGION: eu-north-1
     steps:
+      - name: Import Secrets
+        id: secrets
+        uses: hashicorp/vault-action@v2.1.2
+        with:
+          url: https://vault.online.ntnu.no:8200
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+              /aws/creds/gh-workflow-packer-images access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/gh-workflow-packer-images secret_key | AWS_SECRET_ACCESS_KEY ;
+
+      - name: Wait for IAM eventual consistency
+        run: sleep 10
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION}}
+
       - name: Checkout
         uses: actions/checkout@v2
 
