@@ -42,7 +42,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"} -var 'skip_create_image=false'
+          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"} -var skip_create_image=false
           target: images/base
 
       - name: Find AMI ID
@@ -100,7 +100,7 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"} -var 'skip_create_image=false'
+          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"} -var skip_create_image=false
           target: images/${{ matrix.image }}
 
       - name: Find AMI ID
