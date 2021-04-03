@@ -22,8 +22,8 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
-          target: iamges/base
+          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"}
+          target: images/base
 
       - name: Find AMI ID
         id: ami_id
@@ -60,8 +60,8 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
-          target: iamges/${{ matrix.image }}
+          arguments: -var=aws_ami_tags={ci-run-id="${{ github.run_id }}"}
+          target: images/${{ matrix.image }}
 
       - name: Find AMI ID
         id: ami_id
