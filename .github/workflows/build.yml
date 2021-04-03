@@ -22,8 +22,8 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              /aws/creds/gh-workflow-packer-images access_key | AWS_ACCESS_KEY_ID ;
-              /aws/creds/gh-workflow-packer-images secret_key | AWS_SECRET_ACCESS_KEY ;
+              /aws/creds/packer-builder access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/packer-builder secret_key | AWS_SECRET_ACCESS_KEY ;
 
       - name: Wait for IAM eventual consistency
         run: sleep 10
@@ -80,8 +80,8 @@ jobs:
           url: https://vault.online.ntnu.no:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              /aws/creds/gh-workflow-packer-images access_key | AWS_ACCESS_KEY_ID ;
-              /aws/creds/gh-workflow-packer-images secret_key | AWS_SECRET_ACCESS_KEY ;
+              /aws/creds/packer-builder access_key | AWS_ACCESS_KEY_ID ;
+              /aws/creds/packer-builder secret_key | AWS_SECRET_ACCESS_KEY ;
 
       - name: Wait for IAM eventual consistency
         run: sleep 10
