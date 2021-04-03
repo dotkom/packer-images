@@ -17,23 +17,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-          
+
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
           target: iamges/base
           VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
           VAULT_ADDR: https://vault.online.ntnu.no:8200
 
       - name: Find AMI ID
         id: ami_id
-        run: > 
+        run: >
           ID=$(aws ec2 describe-images
-          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}"
           "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-base*"
-          --query "Images[0].[ImageId]" 
+          --query "Images[0].[ImageId]"
           --output text) &&
           echo "::set-output name=id::$ID"
 
@@ -48,7 +48,7 @@ jobs:
   build-rest:
     name: "Packer build rest"
     runs-on: ubuntu-latest
-    needs: base
+    needs: build-base
     strategy:
       matrix:
         image: ["consul-server", "nomad-client", "nomad-server", vault-server]
@@ -57,21 +57,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-          
+
       - name: Build AWS AMI
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"}
           target: iamges/${{ matrix.image }}
 
       - name: Find AMI ID
         id: ami_id
-        run: > 
+        run: >
           ID=$(aws ec2 describe-images
-          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}"
           "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-${{ matrix.image }}*"
-          --query "Images[0].[ImageId]" 
+          --query "Images[0].[ImageId]"
           --output text) &&
           echo "::set-output name=id::$ID"
 
