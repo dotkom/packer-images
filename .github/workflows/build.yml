@@ -1,0 +1,84 @@
+name: "Build"
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+  VAULT_ADDR: https://vault.online.ntnu.no:8200
+  AWS_DEFAULT_REGION: eu-north-1
+
+jobs:
+  build-base:
+    name: "Packer build base"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+          
+      - name: Build AWS AMI
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+          target: iamges/base
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+          VAULT_ADDR: https://vault.online.ntnu.no:8200
+
+      - name: Find AMI ID
+        id: ami_id
+        run: > 
+          ID=$(aws ec2 describe-images
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-base*"
+          --query "Images[0].[ImageId]" 
+          --output text) &&
+          echo "::set-output name=id::$ID"
+
+      - name: Remove AMI
+        if: github.event_name != 'push'
+        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
+
+      - name: Tag AMI as production
+        if: github.event_name == 'push'
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true
+        
+  build-rest:
+    name: "Packer build rest"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ["consul-server", "nomad-client", "nomad-server", vault-server]
+    env:
+      AWS_DEFAULT_REGION: eu-north-1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+          
+      - name: Build AWS AMI
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: -var=ami_tags={ci-run-id="${{ github.run_id }}"} 
+          target: iamges/${{ matrix.image }}
+
+
+      - name: Find AMI ID
+        id: ami_id
+        run: > 
+          ID=$(aws ec2 describe-images
+          --filter "Name=tag:ci-run-id,Values=${{ github.run_id }}" 
+          "Name=name,Values=dotkom/images/hvm-ssd/ubuntu-focal-20.04-${{ matrix.image}*"
+          --query "Images[0].[ImageId]" 
+          --output text) &&
+          echo "::set-output name=id::$ID"
+
+      - name: Remove AMI
+        if: github.event_name != 'push'
+        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
+
+      - name: Tag AMI as production
+        if: github.event_name == 'push'
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true

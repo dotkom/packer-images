@@ -1,0 +1,39 @@
+name: "Validate"
+
+on:
+  pull_request:
+    branches:
+      - main
+env:
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+  VAULT_ADDR: https://vault.online.ntnu.no:8200
+jobs:
+  validate-packer:
+    name: "Validate packer tempplates"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        image: ["base", "consul-server", "nomad-client", "nomad-server", vault-server]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+          
+      - name: Validate Template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          target: images/${{ matrix.image }}
+  lint:
+    name: "Superlinter"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

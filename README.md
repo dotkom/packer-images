@@ -1,12 +1,7 @@
-# Basline AWS AMI and Azure image
-Packer template to build AMI and Azure image to be used as source image for other builds. This 
-packer template provides configuration for default services such as consul, vault and ssh. As well 
-as defaut user setup.
+# Dotkom's packer monorepo
 
-## Inspec
-Chef Inspec is used as a simple sanity check that things are working as expected. 
+To build an image use packer, ex. ```packer build image/base```.
+Make sure to tag the image as production if it's ready to be used in our actual environment. Can be done in many different ways,
+AWS cli, AWS Console or ```packer build -var="aws_ami_tags={'production'=true}" image/base```
 
-## Vagrant
-The packer template contains a vagrant builder to be used in local testing. This is faster than using the aws build and is nice
-to have when changing scripts and other provisioners. To use this your system needs to have Vagrant and VirtualBox installed.
-Run with ```packer build -only '*.testing' packer.pkr.hcl```
+All images will be build and tagged as production when pushing to master. 
