@@ -10,7 +10,7 @@ leave_on_terminate = true
 server {
   enabled          = true
   bootstrap_expect = [% nomad_bootstrap_expect %]
-  encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
+  encrypt = "{{ with secret "secret/data/nomad/encrypt" }}{{ .Data.data.key }}{{ end }}"
 }
 
 tls {
@@ -26,6 +26,7 @@ tls {
 }
 
 consul {
+  token = "{{ with secret "secret/data/consul/acl/nomad-server" }}{{ .Data.data.key }}{{ end }}"
 }
 
 acl {
@@ -46,7 +47,7 @@ vault {
   enabled          = true
   tls_skip_verify  = true
   token            = "{{ env "VAULT_TOKEN" }}"
-  
+
   address          = "https://vault.service.consul:8200"
   create_from_role = "nomad-cluster"
 }

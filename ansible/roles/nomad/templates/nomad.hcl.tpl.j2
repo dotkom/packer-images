@@ -28,7 +28,7 @@ plugin "raw_exec" {
 }
 
 consul {
-
+  token = "{{ with secret "secret/data/consul/acl/nomad-client" }}{{ .Data.data.key }}{{ end }}"
 }
 
 telemetry {
@@ -41,7 +41,7 @@ telemetry {
 
 vault {
   enabled          = true
-  tls_skip_verify  = true 
+  tls_skip_verify  = true
   address          = "https://vault.service.consul:8200"
   create_from_role = "nomad-cluster"
 }
