@@ -1,5 +1,5 @@
 - name: Overwrite ca template
-  copy: 
+  copy:
     src: ./files/ca.crt.tpl
     dest: /etc/nomad.d/ca.crt.tpl
     mode: 0664
@@ -7,7 +7,7 @@
     owner: nomad
 
 - name: Overwrite agent cert template
-  copy: 
+  copy:
     src: ./files/agent.crt.tpl
     dest: /etc/nomad.d/agent.crt.tpl
     mode: 0664
@@ -15,7 +15,7 @@
     owner: nomad
 
 - name: Overwrite agent key template
-  copy: 
+  copy:
     src: ./files/agent.key.tpl
     dest: /etc/nomad.d/agent.key.tpl
     mode: 0664
@@ -23,7 +23,7 @@
     owner: nomad
 
 - name: Overwrite nomad config
-  template: 
+  template:
     src: ./templates/nomad.hcl.tpl.j2
     dest: /etc/nomad.d/nomad.hcl.tpl
     mode: 0660

@@ -3,57 +3,53 @@
     name: nomad={{ nomad_version }}
     state: present
 
-- name: Install nomad autocompletion
-  shell: nomad -autocomplete-install && complete -C /usr/bin/nomad nomad
-  ignore_errors: yes
-  args:
-    executable: /bin/bash
-
 - name: Remove default config
-  file: 
+  file:
     path: /etc/nomad.d/nomad.hcl
     state: absent
 
 - name: Touch config file
-  file: 
+  file:
     path: /etc/nomad.d/nomad.hcl
     state: touch
     group: nomad
     owner: nomad
-    mode: 660
+    mode: 0660
 
 - name: Touch CA file
-  file: 
+  file:
     path: /etc/nomad.d/ca.crt
     state: touch
     group: nomad
     owner: nomad
+    mode: 0664
 
 - name: Touch cert file
-  file: 
+  file:
     path: /etc/nomad.d/agent.crt
     state: touch
     group: nomad
     owner: nomad
+    mode: 0664
 
 - name: Touch cert key file
-  file: 
+  file:
     path: /etc/nomad.d/agent.key
     state: touch
     group: nomad
     owner: nomad
+    mode: 0660
 
 - name: Add nomad service file
-  copy: 
+  copy:
     src: ./files/nomad.service
     dest: /lib/systemd/system/nomad.service
     mode: 0664
     group: root
     owner: root
 
-
 - name: Add config injection script
-  template: 
+  template:
     src: ./templates/inject-conf.sh.j2
     dest: /etc/nomad.d/inject-conf.sh
     mode: 0774
@@ -61,7 +57,7 @@
     owner: nomad
 
 - name: Add ca template
-  copy: 
+  copy:
     src: ./files/ca.crt.tpl
     dest: /etc/nomad.d/ca.crt.tpl
     mode: 0664
@@ -69,7 +65,7 @@
     owner: nomad
 
 - name: Add agent cert template
-  copy: 
+  copy:
     src: ./files/agent.crt.tpl
     dest: /etc/nomad.d/agent.crt.tpl
     mode: 0664
@@ -77,7 +73,7 @@
     owner: nomad
 
 - name: Add agent key template
-  copy: 
+  copy:
     src: ./files/agent.key.tpl
     dest: /etc/nomad.d/agent.key.tpl
     mode: 0664
@@ -85,7 +81,7 @@
     owner: nomad
 
 - name: Add nomad config
-  template: 
+  template:
     src: ./templates/nomad.hcl.tpl.j2
     dest: /etc/nomad.d/nomad.hcl.tpl
     mode: 0660
@@ -93,7 +89,7 @@
     owner: nomad
 
 - name: Add consul template config
-  copy: 
+  copy:
     src: ./files/templates.hcl
     dest: /etc/consul_template.d/nomad_templates.hcl
     mode: 0664
@@ -101,7 +97,7 @@
     owner: root
 
 - name: Add nomad config injector service
-  copy: 
+  copy:
     src: ./files/nomad-config-injector.service
     dest: /lib/systemd/system/nomad-config-injector.service
     mode: 0664
@@ -111,50 +107,51 @@
 - name: Add nomad user to docker group
   user:
     name: nomad
-    groups: 
+    groups:
       - docker
       - nomad
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Make CNI plugin folder
   file:
     path: /opt/cni/bin
     state: directory
-  when: not nomad_server | bool 
+    mode: 0664
+  when: not nomad_server | bool
 
 - name: Downlaod CNI plugin
-  get_url: 
+  get_url:
     url: https://github.com/containernetworking/plugins/releases/download/v0.9.0/cni-plugins-linux-amd64-v0.9.0.tgz
     dest: /tmp/cni.tar.gz
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Unzip CNI plugin
   unarchive:
     src: /tmp/cni.tar.gz
     dest: /opt/cni/bin
     remote_src: true
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Configure iptables
   sysctl:
     name: net.bridge.bridge-nf-call-arptables
     value: "1"
     state: present
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Configure iptables
   sysctl:
     name: net.bridge.bridge-nf-call-ip6tables
     value: "1"
     state: present
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Configure iptables
   sysctl:
     name: net.bridge.bridge-nf-call-iptables
     value: "1"
     state: present
-  when: not nomad_server | bool 
+  when: not nomad_server | bool
 
 - name: Enable nomad config injector
   service:

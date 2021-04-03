@@ -1,15 +1,14 @@
 title 'Ensure vault is installed, but not running'
 
-describe service('vault') do 
+describe service('vault') do
     it { should be_installed }
     it {should be_enabled}
     it {should_not be_running}
 end
 
-describe service('vault-config-injector') do 
+describe service('vault-config-injector') do
     it { should be_installed }
     it {should be_enabled}
-    it {should_not be_running}
 end
 
 describe user('vault') do

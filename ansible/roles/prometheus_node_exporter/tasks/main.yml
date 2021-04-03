@@ -13,11 +13,11 @@
   copy:
     src: /tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
     dest: /usr/bin/node-exporter
-    mode: 555
+    mode: 0555
     remote_src: true
 
 - name: Add Service file
-  copy: 
+  copy:
     src: ./files/node-exporter.service
     dest: /usr/lib/systemd/system/node-exporter.service
     mode: 0664

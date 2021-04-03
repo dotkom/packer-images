@@ -1,54 +1,53 @@
 - name: Install packages
   apt:
-    pkg: 
+    pkg:
       - consul={{ consul_version }}
       - dnsmasq
     state: present
 
-- name: Install consul autocompletion
-  shell: consul -autocomplete-install && complete -C /usr/bin/consul consul
-  ignore_errors: yes
-  args:
-    executable: /bin/bash
-
 - name: Remove default config
-  file: 
+  file:
     path: /etc/consul.d/consul.hcl
     state: absent
 
 - name: Touch config file
-  file: 
+  file:
     path: /etc/consul.d/consul.hcl
     state: touch
     group: consul
     owner: consul
-    mode: 660
+    mode: 0660
 
 - name: Touch CA file
-  file: 
+  file:
     path: /etc/consul.d/ca.crt
     state: touch
     group: consul
     owner: consul
+    mode: 0664
 
 - name: Touch cert file
-  file: 
+  file:
     path: /etc/consul.d/agent.crt
     state: touch
     group: consul
     owner: consul
+    mode: 0664
+
   when: consul_server | bool
 
 - name: Touch cert key file
-  file: 
+  file:
     path: /etc/consul.d/agent.key
     state: touch
     group: consul
     owner: consul
+    mode: 0660
+
   when: consul_server | bool
 
 - name: Touch config file
-  file: 
+  file:
     path: /etc/consul.d/consul.hcl
     state: touch
     group: consul
@@ -56,7 +55,7 @@
     mode: 0770
 
 - name: Add config injection script
-  template: 
+  template:
     src: ./templates/inject-conf.sh.j2
     dest: /etc/consul.d/inject-conf.sh
     mode: 0774
@@ -64,7 +63,7 @@
     owner: consul
 
 - name: Add key rotation script
-  copy: 
+  copy:
     src: ./files/rotate-gossip-key.sh
     dest: /etc/consul.d/rotate-gossip-key.sh
     mode: 0664
@@ -73,7 +72,7 @@
   when: consul_server | bool
 
 - name: Add key Template
-  copy: 
+  copy:
     src: ./files/gossip.key.tpl
     dest: /etc/consul.d/gossip.key
     mode: 0664
@@ -82,7 +81,7 @@
   when: consul_server | bool
 
 - name: Add consul service file
-  copy: 
+  copy:
     src: ./files/consul.service
     dest: /lib/systemd/system/consul.service
     mode: 0664
@@ -90,7 +89,7 @@
     owner: root
 
 - name: Add consul template config
-  template: 
+  template:
     src: ./templates/templates.hcl.j2
     dest: /etc/consul_template.d/consul_templates.hcl
     mode: 0664
@@ -98,7 +97,7 @@
     owner: root
 
 - name: Add ca template
-  template: 
+  template:
     src: ./templates/ca.crt.tpl.j2
     dest: /etc/consul.d/ca.crt.tpl
     mode: 0664
@@ -106,7 +105,7 @@
     owner: consul
 
 - name: Add agent cert template
-  template: 
+  template:
     src: ./templates/agent.crt.tpl.j2
     dest: /etc/consul.d/agent.crt.tpl
     mode: 0664
@@ -115,7 +114,7 @@
   when: consul_server | bool
 
 - name: Add agent key template
-  template: 
+  template:
     src: ./templates/agent.key.tpl.j2
     dest: /etc/consul.d/agent.key.tpl
     mode: 0664
@@ -123,7 +122,7 @@
     owner: consul
 
 - name: Add consul config template
-  template: 
+  template:
     src: ./templates/consul.hcl.tpl.j2
     dest: /etc/consul.d/consul.hcl.tpl
     mode: 0660
@@ -131,7 +130,7 @@
     owner: consul
 
 - name: Add consul template config
-  template: 
+  template:
     src: ./templates/templates.hcl.j2
     dest: /etc/consul_template.d/consul_templates.hcl
     mode: 0664
@@ -139,7 +138,7 @@
     owner: root
 
 - name: Add consul config injector service
-  template: 
+  template:
     src: ./templates/consul-config-injector.service.j2
     dest: /lib/systemd/system/consul-config-injector.service
     mode: 0664
@@ -159,7 +158,7 @@
     enabled: true
 
 - name: Recreate /etc/resolv.conf
-  copy: 
+  copy:
     src: ./files/resolv.conf
     dest: /etc/resolv.conf
     mode: 0664
@@ -167,12 +166,12 @@
     owner: root
 
 - name: Delete symlinked /etc/resolv.conf
-  file: 
+  file:
     path: /etc/resolv.conf
     state: absent
 
 - name: Recreate /etc/resolv.conf
-  copy: 
+  copy:
     src: ./files/resolv.conf
     dest: /etc/resolv.conf
     mode: 0664
@@ -180,7 +179,7 @@
     owner: root
 
 - name: Add dnsmasq config
-  template: 
+  template:
     src: ./templates/dnsmasq.conf.j2
     dest: /etc/dnsmasq.d/dnsmasq.conf
     mode: 0664
@@ -191,13 +190,13 @@
   lineinfile:
     dest: /etc/dhcp/dhclient.conf
     line: "supersede domain-name-servers 127.0.0.1, 169.254.169.253;"
-    
+
 - name: Disable systemd-resolved
   service:
     name: systemd-resolved
     state: stopped
     enabled: false
-    
+
 - name: Enable dnsmasq
   service:
     name: dnsmasq

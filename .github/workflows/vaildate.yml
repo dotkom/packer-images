@@ -12,12 +12,12 @@ jobs:
     name: Validate packer templates
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
+      matrix:
         image: ["base", "consul-server", "nomad-client", "nomad-server", vault-server]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-          
+
       - name: Validate Template
         uses: hashicorp/packer-github-actions@master
         with:
@@ -36,9 +36,9 @@ jobs:
           targets: |
             ./ansible/roles/base
             ./ansible/roles/consul
-            ./ansible/roles/consul-template
+            ./ansible/roles/consul_template
             ./ansible/roles/docker
             ./ansible/roles/nomad
-            ./ansible/roles/nomad-server
-            ./ansible/roles/prometheus-node-exporter
-            ./ansible/roles/vault-server
+            ./ansible/roles/nomad_server
+            ./ansible/roles/prometheus_node_exporter
+            ./ansible/roles/vault_server
