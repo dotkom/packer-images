@@ -1,12 +1,12 @@
 
 
 - name: Remove default config file
-  file: 
+  file:
     path: /etc/vault.d/vault.hcl
     state: absent
 
 - name: Touch config file
-  file: 
+  file:
     path: /etc/vault.d/vault.hcl
     state: touch
     group: vault
@@ -14,7 +14,7 @@
     mode: 0660
 
 - name: Add vault config template
-  copy: 
+  copy:
     src: ./files/vault.hcl
     dest: /etc/vault.d/vault.hcl
     mode: 0664
@@ -22,7 +22,7 @@
     owner: vault
 
 - name: Add config injection script
-  copy: 
+  copy:
     src: ./files/inject-conf.sh
     dest: /etc/vault.d/inject-conf.sh
     mode: 0774
@@ -30,7 +30,7 @@
     owner: vault
 
 - name: Add vault service file
-  copy: 
+  copy:
     src: ./files/vault.service
     dest: /lib/systemd/system/vault.service
     mode: 0664
@@ -38,7 +38,7 @@
     owner: root
 
 - name: Add vault config injector service
-  copy: 
+  copy:
     src: ./files/vault-config-injector.service
     dest: /lib/systemd/system/vault-config-injector.service
     mode: 0664

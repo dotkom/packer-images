@@ -11,26 +11,26 @@
     dest: /usr/bin/
 
 - name: Create Consul template config dir
-  file: 
+  file:
     path: /etc/consul_template.d/
     state: directory
     recurse: true
     mode: 0751
 
 - name: Add Consul Template vault config
-  copy: 
+  copy:
     src: vault.hcl
     dest: /etc/consul_template.d/vault.hcl
     mode: 0664
-  
+
 - name: Add Consul Template entrypoint
-  template: 
+  template:
     src: consul_template_entrypoint.sh.j2
     dest: /usr/bin/consul_template_entrypoint.sh
     mode: 0774
 
 - name: Add Consul Template service
-  copy: 
+  copy:
     src: consul-template.service
     dest: /usr/lib/systemd/system/consul-template.service
     mode: 0664

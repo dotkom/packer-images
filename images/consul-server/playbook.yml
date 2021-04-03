@@ -3,10 +3,10 @@
     hosts: localhost
     connection: local
     become: yes
-    vars: 
+    vars:
       consul_server: true
       consul_template_vault_role: consul-server
       consul_node_name_prefix: consul-server
     roles:
       - consul
-      - consul-template
+      - consul_template

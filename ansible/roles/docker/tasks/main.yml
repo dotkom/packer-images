@@ -10,12 +10,11 @@
 
 - name: Update apt and install docker
   apt:
-    pkg: 
+    pkg:
       - docker-ce
       - docker-ce-cli
       - containerd.io
     update_cache: yes
-    state: latest
 
 - name: Enable docker
   service:

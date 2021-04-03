@@ -3,13 +3,13 @@
     hosts: localhost
     connection: local
     become: yes
-    vars: 
+    vars:
       consul_template_vault_role: nomad-server
       consul_node_name_prefix: nomad-server
       nomad_server: true
     roles:
-      - consul-template
+      - consul_template
       - consul
       - nomad
-      - nomad-server
+      - nomad_server
 
