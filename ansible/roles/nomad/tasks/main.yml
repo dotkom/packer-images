@@ -1,165 +1,169 @@
 - name: Install packages
   apt:
-    pkg: 
-      - nomad={{ nomad_version }}
-      - dnsmasq
+    name: nomad={{ nomad_version }}
     state: present
 
-- name: Install consul autocompletion
-  shell: consul -autocomplete-install && complete -C /usr/bin/consul consul
+- name: Install nomad autocompletion
+  shell: nomad -autocomplete-install && complete -C /usr/bin/nomad nomad
   ignore_errors: yes
   args:
     executable: /bin/bash
 
-- name: Touch CA file
+- name: Remove default config
   file: 
-    path: /etc/consul.d/ca.crt
-    state: touch
-    group: consul
-    owner: consul
-
-- name: Touch cert file
-  file: 
-    path: /etc/consul.d/agent.crt
-    state: touch
-    group: consul
-    owner: consul
-  when: consul_server | bool
-
-- name: Touch cert key file
-  file: 
-    path: /etc/consul.d/agent.key
-    state: touch
-    group: consul
-    owner: consul
-  when: consul_server | bool
+    path: /etc/nomad.d/nomad.hcl
+    state: absent
 
 - name: Touch config file
   file: 
-    path: /etc/consul.d/consul.hcl
+    path: /etc/nomad.d/nomad.hcl
     state: touch
-    group: consul
-    owner: consul
-    mode: 0770
+    group: nomad
+    owner: nomad
+    mode: 660
+
+- name: Touch CA file
+  file: 
+    path: /etc/nomad.d/ca.crt
+    state: touch
+    group: nomad
+    owner: nomad
+
+- name: Touch cert file
+  file: 
+    path: /etc/nomad.d/agent.crt
+    state: touch
+    group: nomad
+    owner: nomad
+
+- name: Touch cert key file
+  file: 
+    path: /etc/nomad.d/agent.key
+    state: touch
+    group: nomad
+    owner: nomad
+
+- name: Add nomad service file
+  copy: 
+    src: ./files/nomad.service
+    dest: /lib/systemd/system/nomad.service
+    mode: 0664
+    group: root
+    owner: root
+
 
 - name: Add config injection script
-  copy: 
-    src: ./files/inject-conf.{{(consul_server | ternary('server', 'client'))}}.sh
-    dest: /etc/consul.d/inject-conf.sh
-    mode: 0664
-    group: consul
-    owner: consul
-
-- name: Add key rotation script
-  copy: 
-    src: ./files/rotate-gossip-key.sh
-    dest: /etc/consul.d/rorate-gossip-key.sh
-    mode: 0664
-    group: consul
-    owner: consul
-  when: consul_server | bool
-
-- name: Add key Template
-  copy: 
-    src: ./files/gossip-key.key.tpl
-    dest: /etc/consul.d/gossip-key.key
-    mode: 0664
-    group: consul
-    owner: consul
-  when: consul_server | bool
-
-- name: Add consul template config
   template: 
-    src: ./templates/templates.hcl.j2
-    dest: /etc/consul_template.d/consul_templates.hcl
-    mode: 0664
-    group: root
-    owner: root
+    src: ./templates/inject-conf.sh.j2
+    dest: /etc/nomad.d/inject-conf.sh
+    mode: 0774
+    group: nomad
+    owner: nomad
 
 - name: Add ca template
-  template: 
-    src: ./templates/ca.crt.tpl.j2
-    dest: /etc/consul.d/ca.crt.tpl
+  copy: 
+    src: ./files/ca.crt.tpl
+    dest: /etc/nomad.d/ca.crt.tpl
     mode: 0664
-    group: consul
-    owner: consul
+    group: nomad
+    owner: nomad
 
 - name: Add agent cert template
-  template: 
-    src: ./templates/agent.crt.tpl.j2
-    dest: /etc/consul.d/agent.crt.tpl
+  copy: 
+    src: ./files/agent.crt.tpl
+    dest: /etc/nomad.d/agent.crt.tpl
     mode: 0664
-    group: consul
-    owner: consul
-  when: consul_server | bool
+    group: nomad
+    owner: nomad
 
 - name: Add agent key template
-  template: 
-    src: ./templates/agent.key.tpl.j2
-    dest: /etc/consul.d/agent.key.tpl
+  copy: 
+    src: ./files/agent.key.tpl
+    dest: /etc/nomad.d/agent.key.tpl
     mode: 0664
-    group: consul
-    owner: consul
+    group: nomad
+    owner: nomad
 
-- name: Add consul config template
+- name: Add nomad config
   template: 
-    src: ./templates/consul.{{ ( consul_server | ternary('server', 'client') ) }}.tpl.j2
-    dest: /etc/consul.d/consul.hcl.tpl
+    src: ./templates/nomad.hcl.tpl.j2
+    dest: /etc/nomad.d/nomad.hcl.tpl
     mode: 0660
-    group: consul
-    owner: consul
+    group: nomad
+    owner: nomad
 
 - name: Add consul template config
-  template: 
-    src: ./templates/templates.hcl.j2
-    dest: /etc/consul_template.d/consul_templates.hcl
-    mode: 0664
-    group: root
-    owner: root
-
-- name: Recreate /etc/resolv.conf
   copy: 
-    src: ./files/resolv.conf
-    dest: /etc/resolv.conf
+    src: ./files/templates.hcl
+    dest: /etc/consul_template.d/nomad_templates.hcl
     mode: 0664
     group: root
     owner: root
 
-- name: Delete symlinked /etc/resolv.conf
-  file: 
-    path: /etc/resolv.conf
-    state: absent
-
-- name: Recreate /etc/resolv.conf
+- name: Add nomad config injector service
   copy: 
-    src: ./files/resolv.conf
-    dest: /etc/resolv.conf
+    src: ./files/nomad-config-injector.service
+    dest: /lib/systemd/system/nomad-config-injector.service
     mode: 0664
     group: root
     owner: root
 
-- name: Add dnsmasq config
-  template: 
-    src: ./templates/dnsmasq.conf.j2
-    dest: /etc/dnsmasq.d/dnsmasq.conf
-    mode: 0664
-    group: root
-    owner: root
+- name: Add nomad user to docker group
+  user:
+    name: nomad
+    groups: 
+      - docker
+      - nomad
+  when: not nomad_server | bool 
 
-- name: Update dhcp config
-  lineinfile:
-    dest: /etc/dhcp/dhclient.conf
-    line: "supersede domain-name-servers 127.0.0.1, 169.254.169.253;"
-    
-- name: Disable systemd-resolved
+- name: Make CNI plugin folder
+  file:
+    path: /opt/cni/bin
+    state: directory
+  when: not nomad_server | bool 
+
+- name: Downlaod CNI plugin
+  get_url: 
+    url: https://github.com/containernetworking/plugins/releases/download/v0.9.0/cni-plugins-linux-amd64-v0.9.0.tgz
+    dest: /tmp/cni.tar.gz
+  when: not nomad_server | bool 
+
+- name: Unzip CNI plugin
+  unarchive:
+    src: /tmp/cni.tar.gz
+    dest: /opt/cni/bin
+    remote_src: true
+  when: not nomad_server | bool 
+
+- name: Configure iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-arptables
+    value: "1"
+    state: present
+  when: not nomad_server | bool 
+
+- name: Configure iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+  when: not nomad_server | bool 
+
+- name: Configure iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
+  when: not nomad_server | bool 
+
+- name: Enable nomad config injector
   service:
-    name: systemd-resolved
+    name: nomad-config-injector
     state: stopped
-    enabled: false
-    
-- name: Enable dnsmasq
-  service:
-    name: dnsmasq
-    state: started
     enabled: true
 
+- name: Enable nomad
+  service:
+    name: nomad
+    state: stopped
+    enabled: true

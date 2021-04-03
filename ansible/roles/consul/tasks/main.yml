@@ -16,7 +16,7 @@
     path: /etc/consul.d/consul.hcl
     state: absent
 
-- name: Touch config config
+- name: Touch config file
   file: 
     path: /etc/consul.d/consul.hcl
     state: touch
@@ -66,7 +66,7 @@
 - name: Add key rotation script
   copy: 
     src: ./files/rotate-gossip-key.sh
-    dest: /etc/consul.d/rorate-gossip-key.sh
+    dest: /etc/consul.d/rotate-gossip-key.sh
     mode: 0664
     group: consul
     owner: consul
@@ -74,8 +74,8 @@
 
 - name: Add key Template
   copy: 
-    src: ./files/gossip-key.key.tpl
-    dest: /etc/consul.d/gossip-key.key
+    src: ./files/gossip.key.tpl
+    dest: /etc/consul.d/gossip.key
     mode: 0664
     group: consul
     owner: consul

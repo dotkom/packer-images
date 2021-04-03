@@ -4,20 +4,11 @@
     connection: local
     become: yes
     vars: 
-      consul_server: true
-      consul_template_entrypoint_vault_role: nomad-client
+      consul_template_vault_role: nomad-client
+      consul_node_name_prefix: nomad-client
     roles:
       - consul
-      - consul-template-entrypoint
-    post_tasks:
-      - name: Add inspec profiles
-        copy: 
-          src: ../../inspec
-          dest: /tmp
+      - consul-template
+      - docker
+      - nomad
 
-      - name: Run inspec
-        command: inspec exec --chef-license=accept /tmp/inspec/{{ item }}
-        with_items:
-          - base
-          - consul
-          - nomad

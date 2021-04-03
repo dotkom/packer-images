@@ -77,7 +77,7 @@ acl {
     {% if consul_server %}
     master = "{{ with secret "secret/data/consul/acl/master" }}{{ .Data.data.token }}{{ end }}"
     {% endif %}
-    default = "{{ with secret "secret/data/consul/acl/[% consul_acl_secret_path %]" }}{{ .Data.data.token }}{{ end }}"
+    default = "{{ with secret "secret/data/consul/acl/[% consul_node_name_prefix %]" }}{{ .Data.data.token }}{{ end }}"
   }
 }
 

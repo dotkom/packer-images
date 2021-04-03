@@ -5,5 +5,3 @@ echo $CERT | tr '\r\n' ' ' | jq -r '.issuerCertificate' > /etc/vault.d/ca.crt
 echo $CERT | tr '\r\n' ' ' | jq -r '.certificate' > /etc/vault.d/agent.crt
 echo $CERT | tr '\r\n' ' ' | jq -r '.privateKey' > /etc/vault.d/agent.pem
 
-
-consul-template -once -template "/etc/vault.d/vault.hcl.tpl:/etc/vault.d/vault.hcl"

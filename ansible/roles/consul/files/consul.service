@@ -3,7 +3,8 @@ Description="HashiCorp Consul - A service mesh solution"
 Documentation=https://www.consul.io/
 Requires=network-online.target
 After=network-online.target
-Requires=consul-config-injector.service
+Wants=consul-config-injector.service
+After=consul-config-injector.service
 
 [Service]
 User=consul

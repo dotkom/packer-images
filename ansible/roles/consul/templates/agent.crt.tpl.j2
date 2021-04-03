@@ -1,4 +1,10 @@
 #jinja2:variable_start_string:'[%', variable_end_string:'%]', trim_blocks: False
+{% if consul_server %}
 {{ with secret "pki_int/issue/consul-server" "common_name=server.[% consul_datacenter %].consul" "ttl=24h" "alt_names=localhost,*.consul.online.ntnu.no,consul.online.ntnu.no" "ip_sans=127.0.0.1"}}
 {{- .Data.certificate -}}
 {{ end }}
+{% else %}
+{{ with secret "pki_int/issue/consul-client" "common_name=client.consul" "ttl=24h" "alt_names=localhost" "ip_sans=127.0.0.1"}}
+{{- .Data.certificate -}}
+{{ end }}
+{% endif %}

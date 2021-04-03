@@ -34,3 +34,9 @@
     src: consul-template.service
     dest: /usr/lib/systemd/system/consul-template.service
     mode: 0664
+
+- name: Enable consul template
+  service:
+    name: consul-template
+    state: stopped
+    enabled: yes

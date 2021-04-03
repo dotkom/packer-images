@@ -1,0 +1,21 @@
+#!/bin/bash
+export VAULT_ADDR=https://vault.online.ntnu.no:8200
+export NOMAD_NODE_NAME=nomad-server-$(uuidgen)
+
+echo "Node name: $NOMAD_NODE_NAME"
+echo "Logging in with vault role: {{ consul_template_vault_role }}"
+
+if VAULT_TOKEN=$(vault login -method {{ cloud_provider }} -token-only role={{ consul_template_vault_role }}); then
+    export VAULT_TOKEN
+    
+    echo "Vault login successful"
+    
+    consul-template -once -config /etc/consul_template.d/vault.hcl \
+        -template "/etc/nomad.d/nomad.hcl.tpl:/etc/nomad.d/nomad.hcl"
+        -template "/etc/nomad.d/agent.crt.tpl:/etc/nomad.d/agent.crt"
+        -template "/etc/nomad.d/agent.key.tpl:/etc/nomad.d/agent.key"
+        -template "/etc/nomad.d/ca.crt.tpl:/etc/nomad.d/ca.crt"
+else
+    echo "Vault login failed... "
+    exit 1
+fi

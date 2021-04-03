@@ -3,7 +3,7 @@ build {
 
   provisioner "ansible-local" {
     playbook_file = "${path.root}/playbook.yml"
-    playbook_dir  = "${path.root}/../ansible"
+    playbook_dir  = "${path.root}/../../ansible"
 
     extra_arguments = [
       "-e cloud_provider=${local.cloud_provider_map[source.type]}",
@@ -21,8 +21,8 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo inspec exec --chef-license=accept /tmp/inspec/base"
-      "sudo inspec exec --chef-license=accept /tmp/inspec/consul"
+      "sudo inspec exec --chef-license=accept /tmp/inspec/base",
+      "sudo inspec exec --chef-license=accept /tmp/inspec/consul",
       "sudo inspec exec --chef-license=accept /tmp/inspec/nomad"
     ]
   }

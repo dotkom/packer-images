@@ -22,8 +22,8 @@ source "amazon-ebs" "base" {
     packer = true
     source = "{{ .SourceAMI }}"
     Name   = "Nomad server"
-    consul_datacenter = "{{ var.aws_consul_datacenter }}"
-    nomad_datacenter = "{{ var.aws_nomad_datacenter }}"
+    consul_datacenter = "${var.aws_consul_datacenter}"
+    nomad_datacenter = "${var.aws_nomad_datacenter}"
 
-  }, var.ami_tags)
+  }, var.aws_ami_tags)
 }

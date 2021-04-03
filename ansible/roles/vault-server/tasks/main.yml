@@ -15,8 +15,8 @@
 
 - name: Add vault config template
   copy: 
-    src: ./files/vault.hcl.tpl
-    dest: /etc/vault.d/vault.hcl.tpl
+    src: ./files/vault.hcl
+    dest: /etc/vault.d/vault.hcl
     mode: 0664
     group: vault
     owner: vault

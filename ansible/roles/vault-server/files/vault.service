@@ -2,8 +2,9 @@
 Description="HashiCorp Vault - A tool for managing secrets"
 Documentation=https://www.vaultproject.io/docs/
 Requires=network-online.target
-Requires=vault-config-injector.service
 After=network-online.target
+Requires=vault-config-injector.service
+After=vault-config-injector.service
 StartLimitIntervalSec=60
 StartLimitBurst=15
 

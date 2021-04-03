@@ -1,0 +1,5 @@
+name: nomad
+title: Nomad
+summary: Verify Nomad 
+supports:
+  - platform-family: linux

@@ -6,6 +6,8 @@
     vars: 
       is_vault_server: true
       consul_node_name_prefix: vault-server
+      consul_template_vault_role: vault-server
     roles:
       - consul
+      - consul-template
       - vault-server

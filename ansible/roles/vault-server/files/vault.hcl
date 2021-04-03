@@ -26,7 +26,7 @@ telemetry {
   disable_hostname = true
 }
 
-api_addr = "https://{{ sockaddr "GetPublicIP" }}:8200"
-cluster_addr = "https://{{ sockaddr "GetPrivateIP" }}:8201"
+api_addr = "https://0.0.0.0:8200"
+cluster_addr = "https://0.0.0.0:8201"
 ui = true
 
