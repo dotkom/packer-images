@@ -29,7 +29,7 @@ plugin "raw_exec" {
 }
 
 consul {
-  token = "{{ with secret "secret/data/consul/acl/nomad-client" }}{{ .Data.data.key }}{{ end }}"
+  token = "{{ with secret "secret/data/consul/acl/nomad-client" }}{{ .Data.data.token }}{{ end }}"
 }
 
 telemetry {
