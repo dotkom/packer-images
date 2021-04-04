@@ -26,7 +26,7 @@ tls {
 }
 
 consul {
-  token = "{{ with secret "secret/data/consul/acl/nomad-server" }}{{ .Data.data.key }}{{ end }}"
+  token = "{{ with secret "secret/data/consul/acl/nomad-server" }}{{ .Data.data.token }}{{ end }}"
 }
 
 acl {
