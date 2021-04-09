@@ -6,5 +6,5 @@ consul_auto_join_value: server
 consul_bootstrap_expect: 1
 consul_server: false
 consul_node_name_prefix: consul-node
-consul_acl_secret_path: default-consul-node
+consul_acl_secret_path: consul-node
 is_vault_server: false

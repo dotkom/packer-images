@@ -74,7 +74,7 @@
 - name: Add key Template
   copy:
     src: ./files/gossip.key.tpl
-    dest: /etc/consul.d/gossip.key
+    dest: /etc/consul.d/gossip.key.tpl
     mode: 0664
     group: consul
     owner: consul
