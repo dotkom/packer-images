@@ -1,9 +1,8 @@
 
 listener "tcp" {
     address = "0.0.0.0:8200"
-    tls_cert_file = "/etc/vault.d/agent.crt"
-    tls_key_file = "/etc/vault.d/agent.pem"
-    tls_client_ca_file = "/etc/vault.d/ca.crt"
+    tls_cert_file = "/etc/letsencrypt/live/vault.online.ntnu.no/fullchain.pem"
+    tls_key_file = "/etc/letsencrypt/live/vault.online.ntnu.no/privkey.pem"
 }
 
 seal "awskms" {

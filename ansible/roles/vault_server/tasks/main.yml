@@ -5,27 +5,11 @@
     path: /etc/vault.d/vault.hcl
     state: absent
 
-- name: Touch config file
-  file:
-    path: /etc/vault.d/vault.hcl
-    state: touch
-    group: vault
-    owner: vault
-    mode: 0660
-
-- name: Add vault config template
+- name: Add vault config
   copy:
     src: ./files/vault.hcl
     dest: /etc/vault.d/vault.hcl
     mode: 0664
-    group: vault
-    owner: vault
-
-- name: Add config injection script
-  copy:
-    src: ./files/inject-conf.sh
-    dest: /etc/vault.d/inject-conf.sh
-    mode: 0774
     group: vault
     owner: vault
 
@@ -37,13 +21,6 @@
     group: root
     owner: root
 
-- name: Add vault config injector service
-  copy:
-    src: ./files/vault-config-injector.service
-    dest: /lib/systemd/system/vault-config-injector.service
-    mode: 0664
-    group: root
-    owner: root
 
 - name: Set cap_ipc_lock=+ep
   capabilities:
@@ -57,10 +34,11 @@
     state: stopped
     enabled: true
 
-- name: Enable vault config injector
-  service:
-    name: vault-config-injector
-    state: stopped
-    enabled: true
-
+- name: Add letsencrypt deploy hook
+  copy:
+    src: ./files/letsencrypt-deploy-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/vault-restart.sh
+    mode: 0664
+    group: root
+    owner: root
 
