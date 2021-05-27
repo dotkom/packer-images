@@ -6,10 +6,6 @@ describe service('vault') do
     it {should_not be_running}
 end
 
-describe service('vault-config-injector') do
-    it { should be_installed }
-    it {should be_enabled}
-end
 
 describe user('vault') do
     it { should exist }

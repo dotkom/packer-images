@@ -7,7 +7,9 @@
       is_vault_server: true
       consul_node_name_prefix: vault-server
       consul_template_vault_role: vault-server
+      letsencrypt_certs: ["vault.online.ntnu.no"]
     roles:
       - consul
       - consul_template
+      - letsencrypt
       - vault_server

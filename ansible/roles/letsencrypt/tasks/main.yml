@@ -1,0 +1,39 @@
+
+- name: Install certbot
+  snap:
+    name: certbot
+    classic: true
+
+- name: Certbot symlink
+  file:
+    src: /snap/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+
+- name: Trust certbot plugin install
+  shell: snap set certbot trust-plugin-with-root=ok
+
+- name: Install certbot route53 plugin
+  snap:
+    name: certbot-dns-route53
+
+- name: Creates certbot deploy hook directory if id doesn't exist
+  file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+
+
+- name: Run recert on reboot
+  cron:
+    name: Renew letsencrypt certs on reboot
+    special_time: reboot
+    job: certbot certonly --email dotkom@online.ntnu.no --agree-tos -n --dns-route53 -d {{ item }}
+  with_items: "{{ letsencrypt_certs }}"
+
+- name: Run recert once a day
+  cron:
+    name: Renew letsencrypt certs
+    minute: "42"
+    hour: "4"
+    job: certbot certonly --email dotkom@online.ntnu.no --agree-tos -n --dns-route53 -d {{ item }}
+  with_items: "{{ letsencrypt_certs }}"
