@@ -11,5 +11,4 @@
       - consul_template
       - consul
       - nomad
-      - nomad_server
 

@@ -19,8 +19,8 @@
 
 - name: Add Consul Template vault config
   copy:
-    src: vault.hcl
-    dest: /etc/consul_template.d/vault.hcl
+    src: vault-config.hcl
+    dest: /etc/consul_template.d/vault-config.hcl
     mode: 0664
 
 - name: Add Consul Template entrypoint

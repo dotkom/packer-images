@@ -1,14 +1,14 @@
 source "amazon-ebs" "base" {
-  ami_name      = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-nomad-server-${local.timestamp}"
-  spot_instance_types = ["t3.small"]
-  spot_price = "auto"
-  region        = var.aws_region
+  ami_name                    = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-nomad-server-${local.timestamp}"
+  spot_instance_types         = ["t3.small"]
+  spot_price                  = "auto"
+  region                      = var.aws_region
   associate_public_ip_address = "true"
-  ssh_interface = "public_ip"
-  
+  ssh_interface               = "public_ip"
+
   source_ami_filter {
     filters = {
-      name = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-base-*"
+      name             = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-base-*"
       "tag:production" = "true"
     }
 
@@ -19,11 +19,11 @@ source "amazon-ebs" "base" {
   ssh_username = "ubuntu"
 
   tags = merge({
-    packer = true
-    source = "{{ .SourceAMI }}"
-    Name   = "Nomad server"
+    packer            = true
+    source            = "{{ .SourceAMI }}"
+    Name              = "Nomad server"
     consul_datacenter = "${var.aws_consul_datacenter}"
-    nomad_datacenter = "${var.aws_nomad_datacenter}"
+    nomad_datacenter  = "${var.aws_nomad_datacenter}"
 
   }, var.aws_ami_tags)
 }

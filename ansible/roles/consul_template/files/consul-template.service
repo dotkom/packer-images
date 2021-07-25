@@ -5,7 +5,6 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-Environment="VAULT_ADDR=https://vault.online.ntnu.no:8200"
 KillSignal=SIGKILL
 ExecStart=/usr/bin/consul_template_entrypoint.sh
 ExecReload=/bin/kill --signal KILL $MAINPID

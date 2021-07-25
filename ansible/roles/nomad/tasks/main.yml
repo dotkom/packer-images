@@ -48,17 +48,9 @@
     group: root
     owner: root
 
-- name: Add config injection script
-  template:
-    src: ./templates/inject-conf.sh.j2
-    dest: /etc/nomad.d/inject-conf.sh
-    mode: 0774
-    group: nomad
-    owner: nomad
-
 - name: Add ca template
   copy:
-    src: ./files/ca.crt.tpl
+    src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/ca.crt.tpl
     dest: /etc/nomad.d/ca.crt.tpl
     mode: 0664
     group: nomad
@@ -66,7 +58,7 @@
 
 - name: Add agent cert template
   copy:
-    src: ./files/agent.crt.tpl
+    src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/agent.crt.tpl
     dest: /etc/nomad.d/agent.crt.tpl
     mode: 0664
     group: nomad
@@ -74,7 +66,7 @@
 
 - name: Add agent key template
   copy:
-    src: ./files/agent.key.tpl
+    src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/agent.key.tpl
     dest: /etc/nomad.d/agent.key.tpl
     mode: 0664
     group: nomad
@@ -82,7 +74,7 @@
 
 - name: Add nomad config
   template:
-    src: ./templates/nomad.hcl.tpl.j2
+    src: ./templates/nomad-{{ nomad_server  | ternary('server', 'client') }}.hcl.tpl.j2
     dest: /etc/nomad.d/nomad.hcl.tpl
     mode: 0660
     group: nomad
@@ -90,19 +82,9 @@
 
 - name: Add consul template config
   copy:
-    src: ./files/templates.hcl
-    dest: /etc/consul_template.d/nomad_templates.hcl
+    src: ./files/consul-template/nomad-templates.hcl
+    dest: /etc/consul_template.d/nomad-templates.hcl
     mode: 0664
-    group: root
-    owner: root
-
-- name: Add nomad config injector service
-  copy:
-    src: ./files/nomad-config-injector.service
-    dest: /lib/systemd/system/nomad-config-injector.service
-    mode: 0664
-    group: root
-    owner: root
 
 - name: Add nomad user to docker group
   user:
@@ -152,12 +134,6 @@
     value: "1"
     state: present
   when: not nomad_server | bool
-
-- name: Enable nomad config injector
-  service:
-    name: nomad-config-injector
-    state: stopped
-    enabled: true
 
 - name: Enable nomad
   service:
