@@ -5,17 +5,17 @@ Wants=network-online.target
 After=network-online.target
 Wants=consul.service
 After=consul.service
-Wants=nomad-config-injector.service
-After=nomad-config-injector.service
+Wants=consul-template.service
+After=consul-template.service
 
 [Service]
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStart=/usr/bin/nomad agent -config /etc/nomad.d
-KillMode=process
+KillMode=control-group
 KillSignal=SIGINT
 LimitNOFILE=65536
 LimitNPROC=infinity
-Restart=on-failure
+Restart=always
 RestartSec=2
 StartLimitBurst=3
 StartLimitInterval=10

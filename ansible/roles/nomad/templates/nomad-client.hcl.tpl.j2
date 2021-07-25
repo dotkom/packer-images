@@ -3,14 +3,11 @@ data_dir = "/opt/nomad"
 bind_addr = "0.0.0.0"
 
 datacenter = "[% nomad_datacenter %]"
-name = "{{ env "NOMAD_NODE_NAME" }}"
 
 leave_on_terminate = true
 
-server {
+client {
   enabled          = true
-  bootstrap_expect = [% nomad_bootstrap_expect %]
-  encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
 }
 
 tls {
@@ -25,14 +22,14 @@ tls {
   verify_https_client    = true
 }
 
-consul {
-  token = "{{ with secret "secret/data/consul/acl/nomad-server" }}{{ .Data.data.token }}{{ end }}"
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
 }
 
-acl {
-  enabled = true
-  token_ttl = "30s"
-  policy_ttl = "60s"
+consul {
+  token = "{{ with secret "secret/data/consul/acl/nomad-client" }}{{ .Data.data.token }}{{ end }}"
 }
 
 telemetry {
@@ -46,8 +43,12 @@ telemetry {
 vault {
   enabled          = true
   tls_skip_verify  = true
-  token            = "{{ env "VAULT_TOKEN" }}"
-
   address          = "https://vault.service.consul:8200"
   create_from_role = "nomad-cluster"
+}
+
+plugin "docker" {
+  config {
+    allow_privileged = true
+  }
 }

@@ -1,4 +1,4 @@
-consul_version: 1.9.4
+consul_version: 1.10.1
 consul_primary_datacenter: aws-eu-north-1
 consul_client_vault_role: consul-client
 consul_auto_join_key: consul

@@ -1,7 +1,7 @@
 source "amazon-ebs" "ubuntu" {
-  skip_create_ami = var.skip_create_image
+  skip_create_ami             = var.skip_create_image
   ami_name                    = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-base-${local.timestamp}"
-  ami_description = "Base image to use for other builds. Can also be used on it's own for one off tasks"
+  ami_description             = "Base image to use for other builds. Can also be used on it's own for one off tasks"
   spot_instance_types         = ["t3.small"]
   spot_price                  = "auto"
   region                      = var.aws_region
@@ -25,9 +25,10 @@ source "amazon-ebs" "ubuntu" {
 
   ssh_username = "ubuntu"
   tags = merge({
-    packer = true
-    source = "{{ .SourceAMI }}"
-    Name = "Dotkom ubuntu 20.04"
+    packer            = true
+    source            = "{{ .SourceAMI }}"
+    Name              = "Dotkom ubuntu 20.04"
     consul_datacenter = "${var.aws_consul_datacenter}"
   }, var.aws_ami_tags)
+
 }
