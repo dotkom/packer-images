@@ -54,14 +54,6 @@
     owner: consul
     mode: 0770
 
-- name: Add config injection script
-  template:
-    src: ./templates/inject-conf.sh.j2
-    dest: /etc/consul.d/inject-conf.sh
-    mode: 0774
-    group: consul
-    owner: consul
-
 - name: Add key rotation script
   copy:
     src: ./files/rotate-gossip-key.sh
@@ -73,13 +65,62 @@
 
 - name: Add key Template
   copy:
-    src: ./files/gossip.key.tpl
+    src: ./files/consul-template/server/gossip.key.tpl
     dest: /etc/consul.d/gossip.key.tpl
     mode: 0664
     group: consul
     owner: consul
   when: consul_server | bool
 
+- name: Add consul template config
+  copy:
+    src: ./files/consul-template/{{ consul_server | ternary('server', 'client') }}/consul-templates.hcl
+    dest: /etc/consul_template.d/consul-templates.hcl
+    mode: 0664
+    group: root
+    owner: root
+
+- name: Add ca template
+  copy:
+    src: ./files/consul-template/ca.crt.tpl
+    dest: /etc/consul.d/ca.crt.tpl
+    mode: 0664
+    group: consul
+    owner: consul
+
+- name: Add agent cert template
+  copy:
+    src: ./files/consul-template/server/agent.crt.tpl
+    dest: /etc/consul.d/agent.crt.tpl
+    mode: 0664
+    group: consul
+    owner: consul
+  when: consul_server | bool
+
+- name: Add agent key template
+  copy:
+    src: ./files/consul-template/server/agent.key.tpl
+    dest: /etc/consul.d/agent.key.tpl
+    mode: 0664
+    group: consul
+    owner: consul
+
+- name: Add consul config template
+  copy:
+    src: ./files/consul-template/{{ consul_server | ternary('server', 'client') }}/consul.hcl.tpl
+    dest: /etc/consul.d/consul.hcl.tpl
+    mode: 0660
+    group: consul
+    owner: consul
+
+- name: Add consul config injection script
+  template:
+    src: ./templates/inject-conf.sh.j2
+    dest: /etc/consul.d/inject-conf.sh
+    mode: 0770
+    group: consul
+    owner: consul
+    
 - name: Add consul service file
   copy:
     src: ./files/consul.service
@@ -88,72 +129,9 @@
     group: root
     owner: root
 
-- name: Add consul template config
-  template:
-    src: ./templates/templates.hcl.j2
-    dest: /etc/consul_template.d/consul_templates.hcl
-    mode: 0664
-    group: root
-    owner: root
-
-- name: Add ca template
-  template:
-    src: ./templates/ca.crt.tpl.j2
-    dest: /etc/consul.d/ca.crt.tpl
-    mode: 0664
-    group: consul
-    owner: consul
-
-- name: Add agent cert template
-  template:
-    src: ./templates/agent.crt.tpl.j2
-    dest: /etc/consul.d/agent.crt.tpl
-    mode: 0664
-    group: consul
-    owner: consul
-  when: consul_server | bool
-
-- name: Add agent key template
-  template:
-    src: ./templates/agent.key.tpl.j2
-    dest: /etc/consul.d/agent.key.tpl
-    mode: 0664
-    group: consul
-    owner: consul
-
-- name: Add consul config template
-  template:
-    src: ./templates/consul.hcl.tpl.j2
-    dest: /etc/consul.d/consul.hcl.tpl
-    mode: 0660
-    group: consul
-    owner: consul
-
-- name: Add consul template config
-  template:
-    src: ./templates/templates.hcl.j2
-    dest: /etc/consul_template.d/consul_templates.hcl
-    mode: 0664
-    group: root
-    owner: root
-
-- name: Add consul config injector service
-  template:
-    src: ./templates/consul-config-injector.service.j2
-    dest: /lib/systemd/system/consul-config-injector.service
-    mode: 0664
-    group: root
-    owner: root
-
 - name: Enable consul
   service:
     name: consul
-    state: stopped
-    enabled: true
-
-- name: Enable consul config injector
-  service:
-    name: consul-config-injector
     state: stopped
     enabled: true
 

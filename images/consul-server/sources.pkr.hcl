@@ -22,7 +22,12 @@ source "amazon-ebs" "base" {
     packer            = true
     source            = "{{ .SourceAMI }}"
     Name              = "Consul server"
-    consul_datacenter = "${var.aws_consul_datacenter}"
+  }, var.aws_ami_tags)
+
+  fleet_tags = merge({
+    packer            = true
+    source            = "{{ .SourceAMI }}"
+    Name              = "Consul server"
   }, var.aws_ami_tags)
 
 }

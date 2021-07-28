@@ -5,7 +5,6 @@
     become: yes
     vars:
       consul_template_vault_role: nomad-client
-      consul_node_name_prefix: nomad-client
     roles:
       - consul
       - consul_template

@@ -26,4 +26,13 @@ source "amazon-ebs" "base" {
     nomad_datacenter  = "${var.aws_nomad_datacenter}"
 
   }, var.aws_ami_tags)
+
+  fleet_tags = merge({
+    packer            = true
+    source            = "{{ .SourceAMI }}"
+    Name              = "Nomad server"
+    consul_datacenter = "${var.aws_consul_datacenter}"
+    nomad_datacenter  = "${var.aws_nomad_datacenter}"
+
+  }, var.aws_ami_tags)
 }

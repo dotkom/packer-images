@@ -1,15 +1,14 @@
-#jinja2:variable_start_string:'[%', variable_end_string:'%]', trim_blocks: False
 data_dir = "/opt/nomad"
 bind_addr = "0.0.0.0"
 
-datacenter = "[% nomad_datacenter %]"
-name = "{{ env "NOMAD_NODE_NAME" }}"
+datacenter = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.datacenter }}{{ end }}"
+name = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.node_name }}{{ end }}"
 
 leave_on_terminate = true
 
 server {
   enabled          = true
-  bootstrap_expect = [% nomad_bootstrap_expect %]
+  bootstrap_expect = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.bootstrap_expect }}{{ end }}"
   encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
 }
 

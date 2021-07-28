@@ -1,30 +1,13 @@
 #!/bin/bash
 export VAULT_ADDR=https://vault.online.ntnu.no:8200
-export CONSUL_NODE_NAME={{consul_node_name_prefix}}-$(uuidgen)
-
-echo "Node name: $CONSUL_NODE_NAME"
-echo "Logging in with vault role: {{ consul_template_vault_role }}"
 
 if VAULT_TOKEN=$(vault login -method {{ cloud_provider }} -token-only role={{ consul_template_vault_role }}); then
     export VAULT_TOKEN
-    
-    echo "Vault login successful"
-    
-{% if consul_server %}
-    consul-template -once -config /etc/consul_template.d/vault.hcl \
-        -template "/etc/consul.d/consul.hcl.tpl:/etc/consul.d/consul.hcl" \
-        -template "/etc/consul.d/ca.crt.tpl:/etc/consul.d/ca.crt"  \
-        -template "/etc/consul.d/agent.crt.tpl:/etc/consul.d/agent.crt" \
-        -template "/etc/consul.d/agent.key.tpl:/etc/consul.d/agent.key"
-{% else %}
-    consul-template -once -config /etc/consul_template.d/vault.hcl \
-        -template "/etc/consul.d/consul.hcl.tpl:/etc/consul.d/consul.hcl" \
-        -template "/etc/consul.d/ca.crt.tpl:/etc/consul.d/ca.crt"
-{% endif %}
 
+    echo "Vault login successful"
+
+    /usr/bin/consul-template -once -config=/etc/consul_template.d/consul-templates.hcl -config=/etc/consul_template.d/vault-config.hcl
 else
     echo "Vault login failed... "
     exit 1
 fi
-
-

@@ -1,8 +1,7 @@
-#jinja2:variable_start_string:'[%', variable_end_string:'%]', trim_blocks: False
 data_dir = "/opt/nomad"
 bind_addr = "0.0.0.0"
 
-datacenter = "[% nomad_datacenter %]"
+datacenter = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.datacenter }}{{ end }}"
 
 leave_on_terminate = true
 

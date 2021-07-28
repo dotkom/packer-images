@@ -14,8 +14,6 @@
   file:
     path: /etc/consul_template.d/
     state: directory
-    recurse: true
-    mode: 0751
 
 - name: Add Consul Template vault config
   copy:
