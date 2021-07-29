@@ -1,8 +1,6 @@
 data_dir = "/opt/nomad"
 bind_addr = "0.0.0.0"
 
-datacenter = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.datacenter }}{{ end }}"
-
 leave_on_terminate = true
 
 client {
@@ -25,10 +23,6 @@ plugin "raw_exec" {
   config {
     enabled = true
   }
-}
-
-consul {
-  token = "{{ with secret "secret/data/consul/acl/nomad-client" }}{{ .Data.data.token }}{{ end }}"
 }
 
 telemetry {

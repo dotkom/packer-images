@@ -5,11 +5,12 @@ source "amazon-ebs" "base" {
   region                      = var.aws_region
   associate_public_ip_address = "true"
   ssh_interface               = "public_ip"
+  skip_create_ami             = var.skip_create_image
 
   source_ami_filter {
     filters = {
       name             = "dotkom/images/hvm-ssd/ubuntu-focal-20.04-base-*"
-      "tag:production" = "true"
+      "tag:Production" = "true"
     }
 
     owners      = ["891459268445"]
@@ -19,10 +20,15 @@ source "amazon-ebs" "base" {
   ssh_username = "ubuntu"
 
   tags = merge({
-    packer            = true
-    source            = "{{ .SourceAMI }}"
-    Name              = "Vault server"
-    consul_datacenter = "${var.aws_consul_datacenter}"
+    Packer = true
+    Source = "{{ .SourceAMI }}"
+    Name   = "Vault server"
+  }, var.aws_ami_tags)
+
+fleet_tags = merge({
+    Packer = true
+    Source = "{{ .SourceAMI }}"
+    Name   = "Vault server"
   }, var.aws_ami_tags)
 
 }

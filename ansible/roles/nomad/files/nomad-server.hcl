@@ -1,15 +1,10 @@
 data_dir = "/opt/nomad"
 bind_addr = "0.0.0.0"
 
-datacenter = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.datacenter }}{{ end }}"
-name = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.node_name }}{{ end }}"
-
 leave_on_terminate = true
 
 server {
   enabled          = true
-  bootstrap_expect = "{{ with $d := file "/etc/nomad.d/runtime-config-vars" | parseJSON }}{{ $d.bootstrap_expect }}{{ end }}"
-  encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
 }
 
 tls {
@@ -22,10 +17,6 @@ tls {
 
   verify_server_hostname = true
   verify_https_client    = true
-}
-
-consul {
-  token = "{{ with secret "secret/data/consul/acl/nomad-server" }}{{ .Data.data.token }}{{ end }}"
 }
 
 acl {
@@ -51,7 +42,6 @@ plugin "docker" {
 vault {
   enabled          = true
   tls_skip_verify  = true
-  token            = "{{ env "VAULT_TOKEN" }}"
 
   address          = "https://vault.service.consul:8200"
   create_from_role = "nomad-cluster"

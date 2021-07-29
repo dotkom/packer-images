@@ -1,14 +1,6 @@
-Needs a file injected at runtime to fuction
+Some runtime information has to be injected. This can be done with cloud init and user data.
+The servers need the condfig in either .hcl or .json and has to b after "00-consul.hcl" ordered alphabetically
+to properly merge.
 
-A file containing json data at /etc/consul.d/runtime-config-vars
-example data:
-```
-{
-    "datacenter": "xyz",
-    "primary_datacenter: "xyzw",
-    "bootstrap_expect: 3,
-    "acl_role": "consul-node",
-    "retry_join": ["192.168.1.1"],
-    "retry_join_wan": ["provider=azure tag_name=consul-auto-join tag_value=true"]
-}
-```
+Clients need "datacenter", "primary_datacenter", "retry_join", "encrypt" and "acl.tokens.default". 
+The servers will in addition need "bootstrap_expect" and "retry_join_wan"

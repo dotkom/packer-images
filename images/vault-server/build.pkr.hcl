@@ -8,7 +8,6 @@ build {
     extra_arguments = [
       "-e cloud_provider=${local.cloud_provider_map[source.type]}",
       "-e ansible_python_interpreter=/usr/bin/python3",
-      "-e consul_datacenter=${var.aws_consul_datacenter}",
       "-u dotkom",
     ]
   }

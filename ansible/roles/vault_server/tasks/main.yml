@@ -7,8 +7,8 @@
 
 - name: Add vault config
   copy:
-    src: ./files/vault.hcl
-    dest: /etc/vault.d/vault.hcl
+    src: ./files/00-vault.hcl
+    dest: /etc/vault.d/00-vault.hcl
     mode: 0664
     group: vault
     owner: vault

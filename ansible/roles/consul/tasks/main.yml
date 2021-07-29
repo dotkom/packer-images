@@ -107,20 +107,12 @@
 
 - name: Add consul config template
   copy:
-    src: ./files/consul-template/{{ consul_server | ternary('server', 'client') }}/consul.hcl.tpl
-    dest: /etc/consul.d/consul.hcl.tpl
+    src: ./files/00-consul-{{ consul_server | ternary('server', 'client') }}.hcl
+    dest: /etc/consul.d/00-consul.hcl
     mode: 0660
     group: consul
     owner: consul
 
-- name: Add consul config injection script
-  template:
-    src: ./templates/inject-conf.sh.j2
-    dest: /etc/consul.d/inject-conf.sh
-    mode: 0770
-    group: consul
-    owner: consul
-    
 - name: Add consul service file
   copy:
     src: ./files/consul.service

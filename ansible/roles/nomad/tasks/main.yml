@@ -74,8 +74,8 @@
 
 - name: Add nomad config
   copy:
-    src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/nomad.hcl.tpl
-    dest: /etc/nomad.d/nomad.hcl.tpl
+    src: ./files/00-nomad-{{ nomad_server  | ternary('server', 'client') }}.hcl
+    dest: /etc/nomad.d/00-nomad.hcl
     mode: 0660
     group: nomad
     owner: nomad

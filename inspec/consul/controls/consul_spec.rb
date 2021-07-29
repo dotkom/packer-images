@@ -6,11 +6,6 @@ describe service('consul') do
     it {should_not be_running}
 end
 
-describe service('consul-config-injector') do 
-    it { should be_installed }
-    it {should be_enabled}
-    it {should_not be_running}
-end
 
 describe user('consul') do
     it { should exist }
