@@ -27,7 +27,7 @@ ui_config {
     base_url = "http://prometheus.service.consul:9999"
   }
 }
-advertise_addr_wan = "{{ sockaddr "GetPublicIP" }}"
+advertise_addr_wan = "{{ GetPublicIP }}"
 
 telemetry { 
   disable_compat_1.9 = true 
