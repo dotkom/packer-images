@@ -51,11 +51,6 @@
     - ruby
     - vault={{ vault_version }}
 
-- name: Install inspec
-  apt:
-    deb: https://packages.chef.io/files/stable/inspec/4.29.3/ubuntu/20.04/inspec_4.29.3-1_amd64.deb
-    state: present
-
 - name: Configure sshd
   lineinfile:
     path: "/etc/ssh/sshd_config"

@@ -11,10 +11,4 @@ build {
       "-u dotkom",
     ]
   }
-
-  provisioner "file" {
-    source      = "${path.root}/../../inspec"
-    destination = "/tmp/inspec"
-  }
-
 }

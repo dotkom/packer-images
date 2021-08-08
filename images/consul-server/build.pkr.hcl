@@ -11,16 +11,4 @@ build {
       "-u dotkom",
     ]
   }
-
-  provisioner "file" {
-    source      = "${path.root}/../../inspec"
-    destination = "/tmp/inspec"
-  }
-
-  provisioner "shell" {
-    inline = [
-      "sudo inspec exec --chef-license=accept /tmp/inspec/base",
-      "sudo inspec exec --chef-license=accept /tmp/inspec/consul",
-    ]
-  }
 }

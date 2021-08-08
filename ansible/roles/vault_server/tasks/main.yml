@@ -1,4 +1,23 @@
+- name: Ensure config dir is present and has the right mode
+  file:
+    path: /etc/vault.d/
+    state: directory
+    mode: 0775
+    owner: vault
+    group: vault
 
+- name: Ensure storage dir is present and has the right mode
+  file:
+    path: /opt/vault-data
+    state: directory
+    mode: 0770
+    owner: vault
+    group: vault
+
+- name: Remove default config file
+  file:
+    path: /etc/vault.d/vault.hcl
+    state: absent
 
 - name: Remove default config file
   file:
@@ -7,9 +26,17 @@
 
 - name: Add vault config
   copy:
-    src: ./files/00-vault.hcl
-    dest: /etc/vault.d/00-vault.hcl
+    src: ./files/00-vault.hcl.tpl
+    dest: /etc/vault.d/00-vault.hcl.tpl
     mode: 0664
+    group: vault
+    owner: vault
+
+- name: Add vault entrypoint script
+  copy:
+    src: ./files/vault-entrypoint.sh
+    dest: /usr/bin/vault-entrypoint.sh
+    mode: 0774
     group: vault
     owner: vault
 
@@ -20,7 +47,6 @@
     mode: 0664
     group: root
     owner: root
-
 
 - name: Set cap_ipc_lock=+ep
   capabilities:

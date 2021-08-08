@@ -1,0 +1,21 @@
+[Unit]
+Description="HashiCorp Consul Template"
+Documentation=https://github.com/hashicorp/consul-template
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+KillSignal=SIGKILL
+ExecStart=/usr/bin/consul-template -config=/etc/consul-template.d
+ExecReload=/bin/kill --signal KILL $MAINPID
+KillMode=control-group
+User=root
+Group=root
+LimitNOFILE=65536
+Restart=always
+RestartSec=30
+StartLimitInterval=300
+StartLimitBurst=9
+
+[Install]
+WantedBy=multi-user.target

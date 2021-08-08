@@ -8,38 +8,6 @@
     path: /etc/nomad.d/nomad.hcl
     state: absent
 
-- name: Touch config file
-  file:
-    path: /etc/nomad.d/nomad.hcl
-    state: touch
-    group: nomad
-    owner: nomad
-    mode: 0660
-
-- name: Touch CA file
-  file:
-    path: /etc/nomad.d/ca.crt
-    state: touch
-    group: nomad
-    owner: nomad
-    mode: 0664
-
-- name: Touch cert file
-  file:
-    path: /etc/nomad.d/agent.crt
-    state: touch
-    group: nomad
-    owner: nomad
-    mode: 0664
-
-- name: Touch cert key file
-  file:
-    path: /etc/nomad.d/agent.key
-    state: touch
-    group: nomad
-    owner: nomad
-    mode: 0660
-
 - name: Add nomad service file
   copy:
     src: ./files/nomad.service
@@ -74,8 +42,8 @@
 
 - name: Add nomad config
   copy:
-    src: ./files/00-nomad-{{ nomad_server  | ternary('server', 'client') }}.hcl
-    dest: /etc/nomad.d/00-nomad.hcl
+    src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/00-nomad.hcl.tpl
+    dest: /etc/nomad.d/00-nomad.hcl.tpl
     mode: 0660
     group: nomad
     owner: nomad
@@ -83,7 +51,7 @@
 - name: Add consul template config
   copy:
     src: ./files/consul-template/nomad-templates.hcl
-    dest: /etc/consul_template.d/nomad-templates.hcl
+    dest: /etc/consul-template.d/nomad-templates.hcl
     mode: 0664
 
 - name: Add nomad user to docker group

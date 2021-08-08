@@ -4,10 +4,11 @@
     connection: local
     become: yes
     vars:
-      consul_template_vault_role: nomad-client
+      vault_role: nomad-client
     roles:
+      - vault-agent
       - consul
-      - consul_template
+      - consul-template
       - docker
       - nomad
 

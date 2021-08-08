@@ -1,0 +1,46 @@
+- name: Ensure vault agent group exists
+  group:
+    name: vault-agent
+    state: present
+
+- name: Make sure vault agent user exists
+  user:
+    name: vault-agent
+    group: vault-agent
+    state: present
+
+- name: Ensure config dir is present and has the right mode
+  file:
+    path: /etc/vault-agent.d/
+    state: directory
+    mode: 0775
+    owner: vault-agent
+    group: vault-agent
+
+- name: Ensure data dir is present and has the right mode
+  file:
+    path: /opt/vault-agent
+    state: directory
+    mode: 0775
+    owner: vault-agent
+    group: vault-agent
+    
+- name: Add vault agent config
+  template:
+    src: vault-agent.hcl.j2
+    dest: /etc/vault-agent.d/vault-agent.hcl
+    mode: 0774
+
+- name: Add vault-agent service file
+  copy:
+    src: ./files/vault-agent.service
+    dest: /lib/systemd/system/vault-agent.service
+    mode: 0664
+    group: root
+    owner: root
+
+- name: Enable vault-agent
+  service:
+    name: vault-agent
+    state: stopped
+    enabled: true
