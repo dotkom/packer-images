@@ -21,4 +21,7 @@ auto_auth {
 }
 vault {  
     address = "https://vault.online.ntnu.no:8200"
+    retry {    
+        num_retries = 3
+    }
 }
