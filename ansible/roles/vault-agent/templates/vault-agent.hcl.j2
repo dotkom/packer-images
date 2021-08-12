@@ -1,0 +1,27 @@
+pid_file = "/opt/vault-agent/.pidfile"
+auto_auth {    
+
+{% if cloud_provider  == "aws" %}
+    method "aws" {        
+        mount_path = "auth/aws"        
+        config = {            
+            type = "iam"            
+            role = "{{ vault_role }}"        
+        }    
+    }
+{% endif %}
+
+
+    sink "file" {        
+        config = {            
+            path = "/opt/vault-agent/token"
+            mode = 0640
+        }    
+    }
+}
+vault {  
+    address = "https://vault.online.ntnu.no:8200"
+    retry {    
+        num_retries = 3
+    }
+}

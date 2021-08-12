@@ -5,6 +5,7 @@
     become: yes
     roles:
       - base
-      - consul_template
+      - vault-agent
+      - consul-template
       - consul
       - prometheus_node_exporter

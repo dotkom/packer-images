@@ -16,9 +16,9 @@ KillSignal=SIGINT
 LimitNOFILE=65536
 LimitNPROC=infinity
 Restart=always
-RestartSec=2
-StartLimitBurst=3
-StartLimitInterval=10
+RestartSec=30
+StartLimitInterval=300
+StartLimitBurst=9
 TasksMax=infinity
 OOMScoreAdjust=-1000
 

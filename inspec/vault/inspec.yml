@@ -1,5 +1,0 @@
-name: vault
-title: Vault
-summary: Verify Vault 
-supports:
-  - platform-family: linux

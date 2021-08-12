@@ -25,10 +25,14 @@ source "amazon-ebs" "ubuntu" {
 
   ssh_username = "ubuntu"
   tags = merge({
-    packer            = true
-    source            = "{{ .SourceAMI }}"
-    Name              = "Dotkom ubuntu 20.04"
-    consul_datacenter = "${var.aws_consul_datacenter}"
+    Packer = true
+    Source = "{{ .SourceAMI }}"
+    Name   = "Dotkom ubuntu 20.04"
+  }, var.aws_ami_tags)
+  fleet_tags = merge({
+    Packer = true
+    Source = "{{ .SourceAMI }}"
+    Name   = "Dotkom ubuntu 20.04"
   }, var.aws_ami_tags)
 
 }

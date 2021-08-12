@@ -4,12 +4,11 @@
     connection: local
     become: yes
     vars:
-      is_vault_server: true
-      consul_node_name_prefix: vault-server
-      consul_template_vault_role: vault-server
+      vault_role: vault-server
       letsencrypt_certs: ["vault.online.ntnu.no"]
     roles:
+      - vault-agent
       - consul
-      - consul_template
+      - consul-template
       - letsencrypt
       - vault_server

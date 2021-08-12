@@ -55,13 +55,8 @@ jobs:
           --output text) &&
           echo "::set-output name=id::$ID"
 
-      - name: Remove AMI
-        if: github.event_name != 'push'
-        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
-
       - name: Tag AMI as production
-        if: github.event_name == 'push'
-        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=Production,Value=true
 
   build-rest:
     name: "Packer build rest"
@@ -113,10 +108,5 @@ jobs:
           --output text) &&
           echo "::set-output name=id::$ID"
 
-      - name: Remove AMI
-        if: github.event_name != 'push'
-        run: aws ec2 deregister-image --image-id ${{steps.ami_id.outputs.id}}
-
       - name: Tag AMI as production
-        if: github.event_name == 'push'
-        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=production,Value=true
+        run: aws ec2 create-tags --resources ${{steps.ami_id.outputs.id}} --tags Key=Production,Value=true

@@ -36,7 +36,7 @@ jobs:
           targets: |
             ./ansible/roles/base
             ./ansible/roles/consul
-            ./ansible/roles/consul_template
+            ./ansible/roles/consul-template
             ./ansible/roles/docker
             ./ansible/roles/nomad
             ./ansible/roles/nomad_server

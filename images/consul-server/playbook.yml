@@ -5,8 +5,8 @@
     become: yes
     vars:
       consul_server: true
-      consul_template_vault_role: consul-server
-      consul_node_name_prefix: consul-server
+      vault_role: consul-server
     roles:
+      - vault-agent
       - consul
-      - consul_template
+      - consul-template
