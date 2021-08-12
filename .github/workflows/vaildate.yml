@@ -36,9 +36,9 @@ jobs:
           targets: |
             ./ansible/roles/base
             ./ansible/roles/consul
-            ./ansible/roles/consul-template
+            ./ansible/roles/consul_template
+            ./ansible/roles/vault_agent
             ./ansible/roles/docker
             ./ansible/roles/nomad
-            ./ansible/roles/nomad_server
             ./ansible/roles/prometheus_node_exporter
             ./ansible/roles/vault_server

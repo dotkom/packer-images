@@ -7,8 +7,8 @@
       vault_role: nomad-server
       nomad_server: true
     roles:
-      - vault-agent
-      - consul-template
+      - vault_agent
+      - consul_template
       - consul
       - nomad
 

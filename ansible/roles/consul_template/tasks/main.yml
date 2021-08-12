@@ -12,8 +12,9 @@
 
 - name: Create Consul template config dir
   file:
-    path: /etc/consul-template.d/
+    path: /etc/consul-template.d
     state: directory
+    mode: 0775
 
 - name: Add Consul Template vault config
   copy:
