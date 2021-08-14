@@ -1,0 +1,42 @@
+- name: Download Promtail
+  get_url:
+    url: https://github.com/grafana/loki/releases/download/{{ promtail_version }}/promtail-linux-amd64.zip
+    dest: /tmp/promtail.zip
+
+- name: Unzip Promtail
+  unarchive:
+    remote_src: true
+    src: /tmp/promtail.zip
+    dest: /tmp/
+
+- name: Copy executable to right location
+  copy:
+    src: /tmp/promtail-linux-amd64
+    dest: /usr/bin/node-exporter
+    mode: 0775
+    remote_src: true
+
+- name: Ensure config dir exists
+  file:
+    path: /etc/promtail.d/
+    state: directory
+    mode: 0775
+
+- name: Ensure data dir exists
+  file:
+    path: /opt/promtail/
+    state: directory
+    mode: 0775
+
+
+- name: Add Service file
+  copy:
+    src: ./files/promtail.service
+    dest: /usr/lib/systemd/system/promtail.service
+    mode: 0664
+
+- name: Enable and start node exporter
+  service:
+    name: promtail
+    state: started
+    enabled: true
