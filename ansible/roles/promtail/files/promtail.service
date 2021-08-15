@@ -6,15 +6,15 @@ After=network-online.target
 
 [Service]
 KillSignal=SIGKILL
-ExecStart=/usr/bin/promtail -config.file /etc/promtail.d/promtail.yml
+ExecStart=/usr/bin/consul-template -config=/etc/promtail.d/consul-template/exec.hcl
 ExecReload=/bin/kill -HUP $MAINPID
-KillMode=process
+KillMode=control-group
 User=root
 Group=root
 LimitNOFILE=65536
 Restart=always
-RestartSec=1
-StartLimitInterval=10
-StartLimitBurst=5
+RestartSec=30
+StartLimitInterval=600
+StartLimitBurst=19
 [Install]
 WantedBy=multi-user.target

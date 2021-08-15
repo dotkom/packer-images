@@ -9,3 +9,4 @@
       - consul-template
       - consul
       - prometheus_node_exporter
+      - promtail

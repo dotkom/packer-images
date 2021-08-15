@@ -8,6 +8,15 @@
     path: /etc/nomad.d/nomad.hcl
     state: absent
 
+- name: Ensure template dir exists
+  file:
+    path: /etc/nomad.d/nomad-template
+    state: directory
+    mode: 0775
+    owner: nomad
+    group: nomad
+
+
 - name: Add nomad service file
   copy:
     src: ./files/nomad.service
@@ -19,7 +28,7 @@
 - name: Add ca template
   copy:
     src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/ca.crt.tpl
-    dest: /etc/nomad.d/ca.crt.tpl
+    dest: /etc/nomad.d/consul-template/ca.crt.tpl
     mode: 0664
     group: nomad
     owner: nomad
@@ -27,7 +36,7 @@
 - name: Add agent cert template
   copy:
     src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/agent.crt.tpl
-    dest: /etc/nomad.d/agent.crt.tpl
+    dest: /etc/nomad.d/consul-template/agent.crt.tpl
     mode: 0664
     group: nomad
     owner: nomad
@@ -35,15 +44,15 @@
 - name: Add agent key template
   copy:
     src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/agent.key.tpl
-    dest: /etc/nomad.d/agent.key.tpl
+    dest: /etc/nomad.d/consul-template/agent.key.tpl
     mode: 0664
     group: nomad
     owner: nomad
 
-- name: Add nomad config
+- name: Add nomad config template
   copy:
     src: ./files/consul-template/{{ nomad_server  | ternary('server', 'client') }}/00-nomad.hcl.tpl
-    dest: /etc/nomad.d/00-nomad.hcl.tpl
+    dest: /etc/nomad.d/consul-template/00-nomad.hcl.tpl
     mode: 0660
     group: nomad
     owner: nomad

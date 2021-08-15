@@ -49,4 +49,12 @@ plugin "docker" {
   }
 }
 
+consul {
+ address = "127.0.0.1:8501"
+ ssl = true
+ ca_file = "/etc/nomad.d/consul-ca.crt"
+ cert_file = "/etc/nomad.d/consul-agent.crt"
+ key_file = "/etc/nomad.d/consul-agent.key"
+}
+
 {{ end }}

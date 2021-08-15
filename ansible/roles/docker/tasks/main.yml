@@ -16,8 +16,17 @@
       - containerd.io
     update_cache: yes
 
+- name: Add Daemon config file
+  copy:
+    src: ./files/daemon.json
+    dest: /etc/docker/daemon.json
+    mode: 0640
+
 - name: Enable docker
   service:
     name: docker
     state: started
     enabled: true
+
+- name: Install loki log driver
+  command: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions

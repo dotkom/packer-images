@@ -12,13 +12,19 @@
 - name: Copy executable to right location
   copy:
     src: /tmp/promtail-linux-amd64
-    dest: /usr/bin/node-exporter
+    dest: /usr/bin/promtail
     mode: 0775
     remote_src: true
 
 - name: Ensure config dir exists
   file:
     path: /etc/promtail.d/
+    state: directory
+    mode: 0775
+
+- name: Ensure consul template dir exists
+  file:
+    path: /etc/promtail.d/consul-template
     state: directory
     mode: 0775
 
@@ -29,14 +35,26 @@
     mode: 0775
 
 
+- name: Add config temlate
+  copy:
+    src: ./files/consul-template/conf.yml.tpl
+    dest: /etc/promtail.d/consul-template/conf.yml.tpl
+    mode: 0664
+
+- name: Add consul template config
+  copy:
+    src: ./files/consul-template/exec.hcl
+    dest: /etc/promtail.d/consul-template/exec.hcl
+    mode: 0664
+
 - name: Add Service file
   copy:
     src: ./files/promtail.service
     dest: /usr/lib/systemd/system/promtail.service
     mode: 0664
 
-- name: Enable and start node exporter
+- name: Enable promtail
   service:
     name: promtail
-    state: started
+    state: stopped
     enabled: true
