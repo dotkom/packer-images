@@ -47,7 +47,7 @@ vault {
   tls_skip_verify  = true
   address          = "https://vault.online.ntnu.no:8200"
   create_from_role = "nomad-cluster"
-  token = "{{ env "VAULT_TOKEN" }}"
+  token = "{{ with secret "auth/token/create" "policy=nomad-server" "orphan=true" "period=24h"}}{{ .Auth.ClientToken }}{{ end }}"
 }
 
 server = {
@@ -55,14 +55,6 @@ server = {
   bootstrap_expect =  {{ $vars.bootstrap_expect }}
   {{ end }}
   encrypt = "{{ with secret "secret/data/nomad/encrypt" }}{{ .Data.data.key }}{{ end }}"
-}
-
-consul {
- address = "127.0.0.1:8501"
- ssl = true
- ca_file = "/etc/nomad.d/consul-ca.crt"
- cert_file = "/etc/nomad.d/consul-agent.crt"
- key_file = "/etc/nomad.d/consul-agent.key"
 }
 
 {{ end }}

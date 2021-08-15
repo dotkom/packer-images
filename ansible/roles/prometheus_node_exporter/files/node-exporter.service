@@ -13,8 +13,8 @@ User=root
 Group=root
 LimitNOFILE=65536
 Restart=always
-RestartSec=1
-StartLimitInterval=10
-StartLimitBurst=5
+RestartSec=10
+StartLimitInterval=3600
+StartLimitBurst=300
 [Install]
 WantedBy=multi-user.target

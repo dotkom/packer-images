@@ -10,7 +10,7 @@
 
 - name: Ensure template dir exists
   file:
-    path: /etc/nomad.d/nomad-template
+    path: /etc/nomad.d/consul-template
     state: directory
     mode: 0775
     owner: nomad

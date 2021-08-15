@@ -2,11 +2,7 @@
 server                 = true
 advertise_addr = "{{ sockaddr "GetPrivateIP" }}"
 client_addr = "0.0.0.0"
-bind_addr = "0.0.0.0"
 translate_wan_addrs = true
-
-
-bootstrap_expect = {{ $vars.bootstrap_expect }}
 
 encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
 node_name = "{{ $vars.node_name }}"
@@ -16,6 +12,7 @@ retry_join = {{ $vars.retry_join | toJSON}}
 retry_join_wan = {{ $vars.retry_join_wan | toJSON}}
 
 ports {
+  http = -1
   https = 8501
   grpc = 8502
 }
@@ -32,12 +29,18 @@ ui_config {
   metrics_provider = "prometheus"
   metrics_proxy {
     base_url = "http://prometheus.service.consul:9999"
+    add_headers = [{
+      name = "Authorization"
+      value = "{{ with $auth := secret "secret/data/traefik/basicauth"}}{{ base64Encode (printf "%s:%s" $auth.Data.data.username $auth.Data.data.password) | printf "Basic %s"}}{{ end }}"
+    }]
   }
 }
 advertise_addr_wan = "{{ sockaddr "GetPublicIP" }}"
 
-telemetry { 
-  disable_compat_1.9 = true 
+enable_central_service_config = true
+
+telemetry {
+  disable_compat_1.9 = true
   disable_hostname = true
   prometheus_retention_time = "30s"
 }
@@ -50,14 +53,25 @@ connect {
   enabled = true
 }
 
+auto_encrypt {
+  allow_tls = true
+}
+
 data_dir               = "/opt/consul"
 
-acl {
-  enabled                  = true
-  default_policy           = "deny"
-  enable_token_persistence = true
-  enable_token_replication = true
-}
 enable_script_checks = false
 disable_remote_exec = true
+
+config_entries {
+  bootstrap = [
+    {
+      kind = "proxy-defaults"
+      name = "global"
+      config {
+        protocol = "http"
+        envoy_prometheus_bind_addr = "0.0.0.0:9102"
+      }
+    }
+  ]
+}
 {{ end }}
