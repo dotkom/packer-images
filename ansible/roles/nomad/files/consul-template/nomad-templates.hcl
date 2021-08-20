@@ -1,7 +1,7 @@
 template {
   source          = "/etc/nomad.d/consul-template/00-nomad.hcl.tpl"
   destination     = "/etc/nomad.d/00-nomad.hcl"
-  command         = "systemctl reload nomad"
+  command         = "systemctl restart nomad"
   command_timeout = 0
   perms = 664
 }

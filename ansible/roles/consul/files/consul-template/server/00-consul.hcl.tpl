@@ -12,7 +12,6 @@ retry_join = {{ $vars.retry_join | toJSON}}
 retry_join_wan = {{ $vars.retry_join_wan | toJSON}}
 
 ports {
-  http = -1
   https = 8501
   grpc = 8502
 }
@@ -61,6 +60,13 @@ data_dir               = "/opt/consul"
 
 enable_script_checks = false
 disable_remote_exec = true
+
+acl {
+  enabled = true
+  default_policy = "deny"
+  enable_token_replication = true
+  enable_token_persistence = false
+}
 
 config_entries {
   bootstrap = [

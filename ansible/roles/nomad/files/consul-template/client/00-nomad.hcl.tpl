@@ -46,7 +46,14 @@ vault {
 plugin "docker" {
   config {
     allow_privileged = true
+    volumes {
+      enabled = true
+    }
   }
+}
+
+consul {
+  token = "{{ with secret "consul/creds/nomad-client" }}{{ .Data.token }}{{ end }}"
 }
 
 {{ end }}

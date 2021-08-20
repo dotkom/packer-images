@@ -1,6 +1,8 @@
 {{ with $vars := file "/etc/consul.d/vars.yml" | parseYAML }}
 
 advertise_addr = "{{ sockaddr "GetPrivateIP" }}"
+client_addr = "127.0.0.1 {{ sockaddr "GetInterfaceIP \"docker0\"" }}"
+
 translate_wan_addrs = true
 
 encrypt = "{{ with secret "secret/data/consul/encrypt" }}{{ .Data.data.key }}{{ end }}"
@@ -27,6 +29,16 @@ telemetry {
   disable_hostname = true
   prometheus_retention_time = "30s"
 }
+
+acl {
+  enabled = true
+  default_policy = "deny"
+  enable_token_replication = true
+  tokens = {
+    default = "{{ with secret (printf "consul/creds/%s" $vars.acl_role) }}{{ .Data.token }}{{ end }}"
+  }
+}
+
 
 enable_script_checks = false
 disable_remote_exec = true

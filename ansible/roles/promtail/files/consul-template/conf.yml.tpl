@@ -1,5 +1,5 @@
 server:
-  http_listen_address: {{ sockaddr "GetPrivateIP" }}
+  http_listen_address: 0.0.0.0
   http_listen_port: 9080
 
 positions:
@@ -19,10 +19,18 @@ scrape_configs:
     relabel_configs:
       - source_labels: ['__journal__systemd_unit']
         target_label: 'unit'
-  - job_name: docker
-    loki_push_api:
-      server:
-        http_listen_address: 127.0.0.1
-        http_listen_port: 9081
-      labels:
-        pushserver: docker
+  - job_name: 'nomad-logs'
+    consul_sd_configs:
+      - server: '127.0.0.1:8500'
+    relabel_configs:
+      - source_labels: [__meta_consul_node]
+        target_label: __host__
+      - source_labels: [__meta_consul_service]
+        target_label: job
+      - source_labels: [__meta_consul_service_id]
+        regex: '_nomad-task-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})-.*'
+        target_label:  'task_id'
+      - source_labels: [__meta_consul_service_id]
+        regex: '_nomad-task-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})-.*'
+        target_label:  '__path__'
+        replacement: '/opt/nomad/alloc/$1/alloc/logs/*std*.{?,??}'

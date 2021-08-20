@@ -57,4 +57,8 @@ server = {
   encrypt = "{{ with secret "secret/data/nomad/encrypt" }}{{ .Data.data.key }}{{ end }}"
 }
 
+consul {
+  token = "{{ with secret "consul/creds/nomad-server" }}{{ .Data.token }}{{ end }}"
+}
+
 {{ end }}
