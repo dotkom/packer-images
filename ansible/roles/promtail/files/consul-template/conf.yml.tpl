@@ -23,13 +23,11 @@ scrape_configs:
     consul_sd_configs:
       - server: '127.0.0.1:8500'
     relabel_configs:
-      - source_labels: [__meta_consul_node]
-        target_label: __host__
       - source_labels: [__meta_consul_service]
         target_label: job
       - source_labels: [__meta_consul_service_id]
         regex: '_nomad-task-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})-.*'
-        target_label:  'task_id'
+        target_label: alloc
       - source_labels: [__meta_consul_service_id]
         regex: '_nomad-task-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})-.*'
         target_label:  '__path__'
