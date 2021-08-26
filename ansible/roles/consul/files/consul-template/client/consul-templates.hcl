@@ -19,3 +19,9 @@ template {
   command_timeout = 0
 }
 
+template {
+  source      = "/etc/consul.d/consul-template/agent.token.tpl"
+  destination = "/opt/consul/agent.token"
+  command     = "/etc/consul.d/set-agent-token.sh"
+}
+

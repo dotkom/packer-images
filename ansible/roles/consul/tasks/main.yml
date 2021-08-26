@@ -42,7 +42,6 @@
     mode: 0775
     group: consul
     owner: consul
-  when: consul_server | bool
 
 - name: Add key Template
   copy:
@@ -55,12 +54,11 @@
 
 - name: Add agent token key Template
   copy:
-    src: ./files/consul-template/server/agent.token.tpl
+    src: ./files/consul-template/agent.token.tpl
     dest: /etc/consul.d/consul-template/agent.token.tpl
     mode: 0664
     group: consul
     owner: consul
-  when: consul_server | bool
 
 - name: Add consul template config
   copy:

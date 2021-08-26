@@ -34,9 +34,6 @@ acl {
   enabled = true
   default_policy = "deny"
   enable_token_replication = true
-  tokens = {
-    default = "{{ with secret (printf "consul/creds/%s" $vars.acl_role) }}{{ .Data.token }}{{ end }}"
-  }
 }
 
 
