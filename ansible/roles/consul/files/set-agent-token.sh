@@ -10,6 +10,7 @@ export CONSUL_HTTP_TOKEN=$(cat /opt/consul/agent.token)
 if (systemctl -q is-active consul.service)
 then
     consul acl set-agent-token default $CONSUL_HTTP_TOKEN
+    systemctl restart consul
 else
     echo "Consul not active..."
     exit 1

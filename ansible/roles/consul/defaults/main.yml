@@ -1,3 +1,2 @@
-consul_version: 1.10.1
-consul_client_vault_role: consul-client
+consul_version: 1.10.3
 consul_server: false
