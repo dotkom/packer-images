@@ -6,9 +6,9 @@
     vars:
       vault_role: nomad-client
     roles:
-      - vault-agent
+      - vault_agent
       - consul
-      - consul-template
+      - consul_template
       - docker
       - nomad
 
