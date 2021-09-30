@@ -7,13 +7,13 @@ After=network-online.target
 [Service]
 User=consul
 Group=consul
-ExecStart= /usr/bin/consul-template -config=/etc/consul-template.d/vault-config.hcl -config=/etc/consul.d/consul-template/exec.hcl
+ExecStart=/usr/bin/consul-template -config=/etc/consul-template.d/vault-config.hcl -config=/etc/consul.d/consul-template/exec.hcl
 KillMode=control-group
 Restart=always
 LimitNOFILE=65536
-RestartSec=30
-StartLimitInterval=300
-StartLimitBurst=9
+RestartSec=10
+StartLimitInterval=3600
+StartLimitBurst=300
 
 [Install]
 WantedBy=multi-user.target

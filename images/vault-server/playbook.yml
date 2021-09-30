@@ -7,8 +7,8 @@
       vault_role: vault-server
       letsencrypt_certs: ["vault.online.ntnu.no"]
     roles:
-      - vault-agent
+      - vault_agent
       - consul
-      - consul-template
+      - consul_template
       - letsencrypt
       - vault_server

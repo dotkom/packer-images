@@ -2,7 +2,7 @@
 #https://learn.hashicorp.com/tutorials/consul/vault-kv-consul-secure-gossip?in=consul/vault-secure
 export CONSUL_HTTP_ADDR="http://localhost:8500"
 
-NEW_KEY=`cat /opt/consul/gossip/gossip.key | sed -e '/^$/d'`
+NEW_KEY=`cat /opt/consul/gossip.key | sed -e '/^$/d'`
 
 consul keyring -install ${NEW_KEY}
 consul keyring -use ${NEW_KEY}

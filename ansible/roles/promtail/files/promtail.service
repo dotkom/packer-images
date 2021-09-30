@@ -1,14 +1,14 @@
 [Unit]
-Description="Prometheus node exporter"
-Documentation=https://prometheus.io/docs/guides/node-exporter/
+Description="Promtail"
+Documentation=https://grafana.com/docs/loki/latest/clients/promtail/
 Requires=network-online.target
 After=network-online.target
 
 [Service]
 KillSignal=SIGKILL
-ExecStart=/usr/bin/node-exporter
+ExecStart=/usr/bin/consul-template -config=/etc/promtail.d/consul-template/exec.hcl
 ExecReload=/bin/kill -HUP $MAINPID
-KillMode=process
+KillMode=control-group
 User=root
 Group=root
 LimitNOFILE=65536

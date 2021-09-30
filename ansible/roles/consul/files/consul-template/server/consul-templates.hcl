@@ -26,7 +26,7 @@ template {
 
 template {
   source      = "/etc/consul.d/consul-template/gossip.key.tpl"
-  destination = "/opt/consul/gossip/gossip.key"
+  destination = "/opt/consul/gossip.key"
   command     = "/etc/consul.d/rotate_consul_key.sh"
 }
 
@@ -35,3 +35,4 @@ template {
   destination = "/opt/consul/agent.token"
   command     = "/etc/consul.d/set-agent-token.sh"
 }
+

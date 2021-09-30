@@ -16,8 +16,14 @@ seal "awskms"  {
   kms_key_id = "{{ $vars.kms_key_id }}"
 }
 
-storage "file" {
-    path = "/opt/vault-data"
+storage "postgresql" {
+  connection_url = "postgres://vault:{{ $vars.db_password }}@{{ $vars.db_address }}/vault"
+  ha_enabled = true
+}
+
+service_registration "consul" {
+  address = "127.0.0.1:8500"
+  service_address = ""
 }
 
 api_addr = "https://0.0.0.0:8200"

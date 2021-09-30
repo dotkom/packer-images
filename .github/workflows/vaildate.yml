@@ -42,3 +42,4 @@ jobs:
             ./ansible/roles/nomad_server
             ./ansible/roles/prometheus_node_exporter
             ./ansible/roles/vault_server
+            ./ansible/roles/promtail

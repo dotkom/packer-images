@@ -26,15 +26,16 @@
     owner: consul
     group: consul
 
-- name: Add agent token template
+- name: Add key rotation script
   copy:
-    src: ./files/consul-template/agent.token.tpl
-    dest: /etc/consul.d/consul-template/agent.token.tpl
-    mode: 0664
+    src: ./files/rotate-gossip-key.sh
+    dest: /etc/consul.d/rotate-gossip-key.sh
+    mode: 0775
     group: consul
     owner: consul
+  when: consul_server | bool
 
-- name: Add script for setting agent token
+- name: Add set token script
   copy:
     src: ./files/set-agent-token.sh
     dest: /etc/consul.d/set-agent-token.sh
@@ -42,23 +43,22 @@
     group: consul
     owner: consul
 
-- name: Add key rotation script
+- name: Add key Template
   copy:
-    src: ./files/rotate-gossip-key.sh
-    dest: /etc/consul.d/rotate-gossip-key.sh
+    src: ./files/consul-template/server/gossip.key.tpl
+    dest: /etc/consul.d/consul-template/gossip.key.tpl
     mode: 0664
     group: consul
     owner: consul
   when: consul_server | bool
 
-- name: Add key Template
+- name: Add agent token key Template
   copy:
-    src: ./files/consul-template/server/gossip.key.tpl
-    dest: /etc/consul.d/gossip.key.tpl
+    src: ./files/consul-template/agent.token.tpl
+    dest: /etc/consul.d/consul-template/agent.token.tpl
     mode: 0664
     group: consul
     owner: consul
-  when: consul_server | bool
 
 - name: Add consul template config
   copy:

@@ -24,4 +24,10 @@ source "amazon-ebs" "base" {
     Source = "{{ .SourceAMI }}"
     Name   = "Vault server"
   }, var.aws_ami_tags)
+
+  fleet_tags = merge({
+    Packer = true
+    Source = "{{ .SourceAMI }}"
+    Name   = "Vault server"
+  }, var.aws_ami_tags)
 }

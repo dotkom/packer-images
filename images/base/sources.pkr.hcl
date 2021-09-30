@@ -29,6 +29,7 @@ source "amazon-ebs" "ubuntu" {
     Source = "{{ .SourceAMI }}"
     Name   = "Dotkom ubuntu 20.04"
   }, var.aws_ami_tags)
+
   fleet_tags = merge({
     Packer = true
     Source = "{{ .SourceAMI }}"

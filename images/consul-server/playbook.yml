@@ -7,6 +7,6 @@
       consul_server: true
       vault_role: consul-server
     roles:
-      - vault-agent
+      - vault_agent
       - consul
-      - consul-template
+      - consul_template

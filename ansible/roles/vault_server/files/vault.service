@@ -19,9 +19,9 @@ ExecReload=/bin/kill --signal HUP $MAINPID
 KillSignal=SIGINT
 Restart=on-failure
 TimeoutStopSec=30
-RestartSec=30
-StartLimitInterval=300
-StartLimitBurst=9
+RestartSec=10
+StartLimitInterval=3600
+StartLimitBurst=300
 LimitNOFILE=65536
 LimitMEMLOCK=infinity
 
