@@ -29,10 +29,3 @@ template {
   destination = "/opt/consul/gossip.key"
   command     = "/etc/consul.d/rotate_consul_key.sh"
 }
-
-template {
-  source      = "/etc/consul.d/consul-template/agent.token.tpl"
-  destination = "/opt/consul/agent.token"
-  command     = "/etc/consul.d/set-agent-token.sh"
-}
-
