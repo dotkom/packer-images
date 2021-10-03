@@ -66,6 +66,9 @@ acl {
   default_policy = "deny"
   enable_token_replication = true
   enable_token_persistence = true
+  tokens {
+    default = "{{ $vars.acl_token }}"
+  }
 }
 
 config_entries {
