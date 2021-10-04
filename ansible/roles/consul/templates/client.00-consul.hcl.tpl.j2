@@ -5,9 +5,9 @@ advertise_addr = "{{ sockaddr "GetPrivateIP" }}"
 {%- endraw %}
 
 {% if consul_from_docker %}
-client_addr = "127.0.0.1"
-{% else %}
 client_addr = "127.0.0.1 172.17.0.1"
+{% else %}
+client_addr = "127.0.0.1"
 {% endif %}
 
 {% raw -%}
