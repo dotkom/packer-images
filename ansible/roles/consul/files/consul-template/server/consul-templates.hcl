@@ -1,9 +1,4 @@
 template {
-  source      = "/etc/consul.d/consul-template/00-consul.hcl.tpl"
-  destination = "/etc/consul.d/00-consul.hcl"
-}
-
-template {
   source      = "/etc/consul.d/consul-template/ca.crt.tpl"
   destination = "/etc/consul.d/ca.crt"
   command     = "consul reload"

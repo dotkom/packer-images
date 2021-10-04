@@ -5,6 +5,7 @@
     become: yes
     vars:
       vault_role: nomad-client
+      consul_from_docker: true
     roles:
       - vault_agent
       - consul
