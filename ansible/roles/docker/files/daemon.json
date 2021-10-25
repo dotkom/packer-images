@@ -1,0 +1,4 @@
+{
+    "insecure-registries": ["docker-registry.service.consul"]
+}
+
