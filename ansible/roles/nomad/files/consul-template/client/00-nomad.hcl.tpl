@@ -52,8 +52,4 @@ plugin "docker" {
   }
 }
 
-consul {
-  token = "{{ with secret "consul/creds/nomad-client" }}{{ .Data.token }}{{ end }}"
-}
-
 {{ end }}

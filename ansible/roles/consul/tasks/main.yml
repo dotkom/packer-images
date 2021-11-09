@@ -35,14 +35,6 @@
     owner: consul
   when: consul_server | bool
 
-- name: Add set token script
-  copy:
-    src: ./files/set-agent-token.sh
-    dest: /etc/consul.d/set-agent-token.sh
-    mode: 0775
-    group: consul
-    owner: consul
-
 - name: Add key Template
   copy:
     src: ./files/consul-template/server/gossip.key.tpl
@@ -51,14 +43,6 @@
     group: consul
     owner: consul
   when: consul_server | bool
-
-- name: Add agent token key Template
-  copy:
-    src: ./files/consul-template/agent.token.tpl
-    dest: /etc/consul.d/consul-template/agent.token.tpl
-    mode: 0664
-    group: consul
-    owner: consul
 
 - name: Add consul template config
   copy:
@@ -92,13 +76,23 @@
     group: consul
     owner: consul
 
-- name: Add consul config template
+- name: Add consul sever config template
   copy:
-    src: ./files/consul-template/{{ consul_server | ternary('server', 'client') }}/00-consul.hcl.tpl
+    src: ./files/consul-template/server/00-consul.hcl.tpl
     dest: /etc/consul.d/consul-template/00-consul.hcl.tpl
     mode: 0664
     group: consul
     owner: consul
+  when: consul_server | bool
+
+- name: Render consul client config template
+  template:
+    src: ./templates/client.00-consul.hcl.tpl.j2
+    dest: /etc/consul.d/consul-template/00-consul.hcl.tpl
+    mode: 0664
+    group: consul
+    owner: consul
+  when: not consul_server | bool
 
 - name: Add consul template exec config
   copy:
