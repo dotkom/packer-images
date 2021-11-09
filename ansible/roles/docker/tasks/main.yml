@@ -16,7 +16,6 @@
       - containerd.io
     update_cache: yes
 
-
 - name: Add daemon config
   copy:
     src: ./files/daemon.json

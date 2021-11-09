@@ -22,29 +22,16 @@
     state: directory
     mode: 0775
 
-- name: Ensure consul template dir exists
-  file:
-    path: /etc/promtail.d/consul-template
-    state: directory
-    mode: 0775
-
 - name: Ensure data dir exists
   file:
     path: /opt/promtail/
     state: directory
     mode: 0775
 
-
-- name: Add config temlate
+- name: Add config
   copy:
-    src: ./files/consul-template/conf.yml.tpl
-    dest: /etc/promtail.d/consul-template/conf.yml.tpl
-    mode: 0664
-
-- name: Add consul template config
-  copy:
-    src: ./files/consul-template/exec.hcl
-    dest: /etc/promtail.d/consul-template/exec.hcl
+    src: ./files/conf.yml
+    dest: /etc/promtail.d/conf.yml
     mode: 0664
 
 - name: Add Service file
