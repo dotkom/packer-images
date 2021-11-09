@@ -6,7 +6,7 @@ After=network-online.target
 
 [Service]
 KillSignal=SIGKILL
-ExecStart=/usr/bin/consul-template -config=/etc/promtail.d/consul-template/exec.hcl
+ExecStart=/usr/bin/promtail -config.file /etc/promtail.d/conf.yml
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=control-group
 User=root

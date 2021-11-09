@@ -16,6 +16,14 @@
       - containerd.io
     update_cache: yes
 
+- name: Add docker daemon file
+  copy:
+    src: ./files/daemon.json
+    dest: /etc/docker/daemon.json
+    mode: 0775
+    group: root
+    owner: root
+  
 - name: Enable docker
   service:
     name: docker

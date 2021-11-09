@@ -6,23 +6,29 @@ positions:
   filename: /opt/promtail/positions.yaml
 
 clients:
-{{ range service "loki|any" }}
-  - url: http://{{ .Address }}:{{ .Port }}/loki/api/v1/push
-{{ end }}
-
+  - url: https://loki.ingress.consul:3100/loki/api/v1/push
+    tls_config:
+      insecure_skip_verify: true
+      
 scrape_configs:
   - job_name: journal
     journal:
+      json: true
       max_age: 12h
       labels:
         job: systemd-journal
     relabel_configs:
       - source_labels: ['__journal__systemd_unit']
         target_label: 'unit'
+      - source_labels: [__journal__hostname]
+        target_label: nodename
   - job_name: 'nomad-logs'
     consul_sd_configs:
       - server: '127.0.0.1:8500'
     relabel_configs:
+      - source_labels: [__meta_consul_service]
+        action: drop
+        regex: (.+)-sidecar-proxy
       - source_labels: [__meta_consul_service]
         target_label: job
       - source_labels: [__meta_consul_service_id]
